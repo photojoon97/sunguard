@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunguard</title>
+    <!--JQuery(ajax)-->
+    <!--서비스 할 때는 다운로드해서 import로 변경-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#departure_btn").click(function(){
+                let departure = $("select[name=departureStop]").val(); //select option 값 
+                console.log("departure option : ", departure);
+
+                $.ajax({
+                    url: 'arrivalbuses/',
+                    type : 'GET',
+                    data : {
+                        'busStop_id' : departure,
+                    },
+                    dataType : 'json',
+                    async : false,
+                    success : function(data){ //응답을 기다리고 있다가 response가 넘어오면 동작
+                        //선택한 버스를 넘겨주고, 버스도착 정보를 받아서 테이블로 뿌려줌
+                        alert(data)
+                        console.log(data);
+                    },
+                    error : function(request, error){
+                        alert("status : " + request.status+"\n"+"message : "+request.responseText+"\n"+"error : "+error);
+                    }
+                });
+            })
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <div>
+            <!--지도영역-->
+        </div>
+        <div>
+            <h3>출발 정류장</h3>
+            <form>
+                <!--https://yjshin.tistory.com/entry/Python-django-장고-템플릿-->
+                <select name="departureStop" id="">
+                    {% for nearStop in nearStops %}
+                    <option value={{nearStop.busStopId}} id="busStop_id">{{nearStop.busStopName}}</option>
+                    {% endfor %}
+                </select>
+                <button id="departure_btn">선택</button>
+            </form>
+        </div>
+        <div>
+            <h3>도착 정류장</h3>
+            <form action="">
+                <select name="" id=""></select>
+                <button id="arrival_bnt">선택</button>
+            </form>
+        </div>
+        <div>
+            <h4>도착 정보</h4>
+            <div id="arrival_buses">
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+<table>
+    <tr><th>버스 번호</th><th>남은 시간</th><th>남은 정류장</th></tr>
+    {% for bus in buese %}
+    <tr><td>{{bus.busNum}}</td><td>{{bus.remainTime}}</td><td>{{remainStops}}</td></tr>
+    {% endfor%}
+</table>
