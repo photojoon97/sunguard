@@ -1,5 +1,5 @@
 from json import dumps
-from unicodedata import decimal
+from xml.etree import ElementTree
 from decimal import *
 from django.http import Http404, JsonResponse #JsonResponse: HttpResponse의 subclass로, JSON-encoded response를 생성할수 있게 해준다.
 from django.shortcuts import render
@@ -42,13 +42,32 @@ def showNearStops():
 
 #사용자가 선택한 버스 정류장의 ID를 넘겨받아 해당 버스 정류장의 정보(도착 버스, 남은 시간, 정류장 이름)를 조회
 def busArrivalInfo(request):
+    comingBuses = []
+    count = {'cnt' : 0}
     if request.method == 'GET' and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest': #is_ajax()는 장고 4.x에서 삭제됨
         try:
             busStopId = request.GET['busStop_id'] #선택한 출발 정류장ID
             arrivalBuses = getBusArrivalInfo(busStopId) #도착 예정 버스가 list[dict, ...] 형태로 반환
-            print("\narrivalBuses : ", arrivalBuses[0])
+
+            rootElement = ElementTree.fromstring(arrivalBuses)
+            iterElement = rootElement.iter(tag = 'item')
+
+            for element in iterElement:
+                busDict = {}
+                busDict['stopName'] = element.find('nodenm').text #현재 정류장 이름
+                busDict['busNum'] = element.find('lineno').text # 버스 번호
+                busDict['busLine'] = element.find('lineid').text # 노선 ID
+                try: 
+                    busDict['remainTime'] = element.find('min1').text # 남은 도착 시간(분)
+                    busDict['remainStops'] = element.find('station1').text # 남은 정류소 수
+                except:
+                    busDict['remainTime'] = "운행 종료"
+                    busDict['remainStops'] = "운행 종료"
+                count['cnt'] += 1
+                comingBuses.append(busDict)
+            comingBuses.append(count)
             context = {
-                'arrivalBuses' : arrivalBuses[0],
+                'arrivalBuses' : comingBuses,
             }
             return HttpResponse(dumps(context), content_type = "application/json")
         except arrivalBuses.DoesNotExist:

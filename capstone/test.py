@@ -1,12 +1,13 @@
 import requests
+import urllib.parse as parse
 from xml.etree import ElementTree
 
 busServicekey = "NUg3JoF3qG4D0ta4dKvgz9lo4SMpZ03u1Rh1SLHQZcJUEDitfcC3vNeKGjMqVr9dW45y52Z9GWj2yQsMeggVLQ=="
 
 def arrivalBus(busStopId):
     print("정류장 ID : ", busStopId)
-    url = "http://apis.data.go.kr/6260000/BusanBIMS/stopArrByBstopid"
-    params ={'Bstopid': busStopId, "serviceKey" : busServicekey}
+    url = "http://apis.data.go.kr/6260000/BusanBIMS/stopArrByBstopid?"
+    params ={'bstopid': busStopId, "serviceKey" : busServicekey}
 
     response = requests.get(url, params)
     print(response.content.decode('utf-8'))

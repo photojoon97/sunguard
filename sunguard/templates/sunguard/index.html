@@ -22,16 +22,21 @@
                     },
                     dataType : 'json',
                     async : false,
-                    success : function(data){ //응답을 기다리고 있다가 response가 넘어오면 동작
+                    success : function(response){ //응답을 기다리고 있다가 data 넘어오면 동작
                         //선택한 버스를 넘겨주고, 버스도착 정보를 받아서 테이블로 뿌려줌
-                        alert(data)
-                        console.log(data);
-                    },
-                    error : function(request, error){
-                        alert("status : " + request.status+"\n"+"message : "+request.responseText+"\n"+"error : "+error);
+                        if(response != undefined && response != ''){
+                            var data = response.arrivalBuses;
+                            //alert(JSON.stringify(data.arrivalBuses[0].busNum));
+                            var str = '<TR>';
+                            $.each(data , function(i){
+                                str += '<TD>' + data[i].busNum + '</TD><TD>' + data[i].busLine + '</TD><TD>' + data[i].remainTime + '</TD><TD>' + data[i].remainStops + '</TD>';
+                                str += '</TR>';
+                            });
+                            $("#arrival_buses_table_body").html(str);
+                        };
                     }
                 });
-            })
+            });
         });
     </script>
 </head>
@@ -42,7 +47,7 @@
         </div>
         <div>
             <h3>출발 정류장</h3>
-            <form>
+            <form onsubmit="return false";>
                 <!--https://yjshin.tistory.com/entry/Python-django-장고-템플릿-->
                 <select name="departureStop" id="">
                     {% for nearStop in nearStops %}
@@ -62,7 +67,12 @@
         <div>
             <h4>도착 정보</h4>
             <div id="arrival_buses">
-                
+                <table id="arrival_buses_table">
+                    <th><td>버스 번호</td><td>노선 번호</td><td>남은 시간</td><td>남은 정류장</td></th>
+                    <tbody id="arrival_buses_table_body">
+
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

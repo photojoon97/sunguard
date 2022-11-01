@@ -7,13 +7,11 @@ from datetime import date
 import requests
 import decimal
 
-serviceKeyDecoded = unquote(servicekey, 'UTF-8')
-
 #정류장 정보를 데이터베이스에 입력
 def getBusStopInfo():
     url = 'http://apis.data.go.kr/6260000/BusanBIMS/busStopList'
 
-    params ={'serviceKey' : serviceKeyDecoded, 'numOfRows':8400, 'pageNo':1}
+    params ={'serviceKey' : servicekey, 'numOfRows':8400, 'pageNo':1}
     response = requests.get(url, params= params)
     rootElement = ElementTree.fromstring(response.text)
     iterElement = rootElement.iter(tag = 'item')
@@ -31,40 +29,25 @@ def getSolaInfo(latitude, longitude):
     locdate =  today.strftime("%Y%m%d")
     url = 'http://apis.data.go.kr/B090041/openapi/service/SrAltudeInfoService/getLCSrAltudeInfo'
 
-    params = {'serviceKey': serviceKeyDecoded, 'locdate': locdate,'latitude':latitude, 'longitude':longitude, 'dnYn':'y'}
+    params = {'serviceKey': servicekey, 'locdate': locdate,'latitude':latitude, 'longitude':longitude, 'dnYn':'y'}
     response = requests.get(url, params=params)
 
     return response
 
 #버스 도착 정보 조회 (정류장ID를 기준)
 def getBusArrivalInfo(busStopId):
-    print('버스 도착 정보 조회 : ', busStopId)
-    comingBuses = []
+    #comingBuses = []
+    print("정류장 ID : ", busStopId)
+    url = "http://apis.data.go.kr/6260000/BusanBIMS/stopArrByBstopid?"
+    params ={'bstopid': busStopId, "serviceKey" : servicekey}
+    response = requests.get(url, params)
+    response = response.content.decode('utf-8')
 
-    url = 'http://apis.data.go.kr/6260000/BusanBIMS/stopArrByBstopid'
-    params ={'serviceKey' : serviceKeyDecoded, 'Bstopid': busStopId}
-    response = requests.get(url, params= params)
-
-    rootElement = ElementTree.fromstring(response.text)
-    iterElement = rootElement.iter(tag = 'item')
-    
-    for element in iterElement:
-        busDict = {}
-        busDict['stopName'] = element.find('nodenm').text #현재 정류장 이름
-        busDict['busNum'] = element.find('lineno').text # 버스 번호
-        busDict['busLine'] = element.find('lineid').text # 노선 ID
-        try: 
-            busDict['remainTime'] = element.find('min1').text # 남은 도착 시간(분)
-            busDict['remainStops'] = element.find('station1').text # 남은 정류소 수
-        except:
-            busDict['remainTime'] = "운행 종료"
-            busDict['remainStops'] = "운행 종료"
-        comingBuses.append(busDict)
-    return comingBuses
+    return response
 
 def findCityCode():
     url = "http://apis.data.go.kr/1613000/BusRouteInfoInqireService/getCtyCodeList"
-    params ={'serviceKey' : serviceKeyDecoded}
+    params ={'serviceKey' : servicekey}
     response = requests.get(url, params= params)
     response = response.content.decode('utf-8')
     print(response)
@@ -73,7 +56,7 @@ def getLineInfo(lineId):
     nodeLine = []
     #response까지 init 함수로 묶기
     url = "http://apis.data.go.kr/6260000/BusanBIMS/busInfoByRouteId"
-    params ={'serviceKey' : serviceKeyDecoded, 'lineid': lineId}
+    params ={'serviceKey' : servicekey, 'lineid': lineId}
     response = requests.get(url, params= params)
     response = response.content.decode('utf-8')
     
@@ -91,3 +74,6 @@ def getLineInfo(lineId):
         nodeLine.append(busDict)
     nodeLine = tuple(nodeLine)
     return nodeLine
+
+#test
+#print(getBusArrivalInfo(185000302))
