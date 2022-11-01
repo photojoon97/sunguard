@@ -8,37 +8,7 @@
     <!--JQuery(ajax)-->
     <!--서비스 할 때는 다운로드해서 import로 변경-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $("#departure_btn").click(function(){
-                let departure = $("select[name=departureStop]").val(); //select option 값 
-                console.log("departure option : ", departure);
-
-                $.ajax({
-                    url: 'arrivalbuses/',
-                    type : 'GET',
-                    data : {
-                        'busStop_id' : departure,
-                    },
-                    dataType : 'json',
-                    async : false,
-                    success : function(response){ //응답을 기다리고 있다가 data 넘어오면 동작
-                        //선택한 버스를 넘겨주고, 버스도착 정보를 받아서 테이블로 뿌려줌
-                        if(response != undefined && response != ''){
-                            var data = response.arrivalBuses;
-                            //alert(JSON.stringify(data.arrivalBuses[0].busNum));
-                            var str = '<TR>';
-                            $.each(data , function(i){
-                                str += '<TD>' + data[i].busNum + '</TD><TD>' + data[i].busLine + '</TD><TD>' + data[i].remainTime + '</TD><TD>' + data[i].remainStops + '</TD>';
-                                str += '</TR>';
-                            });
-                            $("#arrival_buses_table_body").html(str);
-                        };
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="../../../static/js/index.js"></script>
 </head>
 <body>
     <div>

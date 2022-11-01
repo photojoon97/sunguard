@@ -2,10 +2,12 @@ from platform import node
 from xml.etree import ElementTree
 from sunguard.models import busStopInfo
 from urllib.parse import urlencode, unquote, quote_plus
-from key import servicekey
+#from key import servicekey
 from datetime import date
 import requests
 import decimal
+
+servicekey = "NUg3JoF3qG4D0ta4dKvgz9lo4SMpZ03u1Rh1SLHQZcJUEDitfcC3vNeKGjMqVr9dW45y52Z9GWj2yQsMeggVLQ=="
 
 #정류장 정보를 데이터베이스에 입력
 def getBusStopInfo():
