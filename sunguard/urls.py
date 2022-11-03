@@ -13,4 +13,5 @@ urlpatterns = [
     path('arrivalbuses/', views.busArrivalInfo, name='arrival_buses'),
     path('stopinfoapi/', views.busStopInfoApi, name='busStopApi'),
     path('nearstopinfo/', views.showNearStops, name='nearStopApi'),
+    path('retrieveLineInfo/', views.retrieveLineInfo, name='retrieveLineInfo'),
 ]

@@ -2,12 +2,12 @@ from platform import node
 from xml.etree import ElementTree
 from sunguard.models import busStopInfo
 from urllib.parse import urlencode, unquote, quote_plus
-#from key import servicekey
+from key import servicekey
 from datetime import date
 import requests
 import decimal
 
-servicekey = "NUg3JoF3qG4D0ta4dKvgz9lo4SMpZ03u1Rh1SLHQZcJUEDitfcC3vNeKGjMqVr9dW45y52Z9GWj2yQsMeggVLQ=="
+
 
 #정류장 정보를 데이터베이스에 입력
 def getBusStopInfo():
@@ -62,20 +62,7 @@ def getLineInfo(lineId):
     response = requests.get(url, params= params)
     response = response.content.decode('utf-8')
     
-    rootElement = ElementTree.fromstring(response)
-    iterElement = rootElement.iter(tag = 'item') #item 태그 아래 자식 노드를 순회하기 위해 지정
-    for element in iterElement:
-        busDict = {}
-        busDict['bstopidx'] = element.findtext('bstopidx')
-        busDict['stopName'] = element.findtext('bstopnm')
-        busDict['nodeid'] = element.findtext('nodeid')
-        print("=" * 60)
-        print("정류장 순번 : ",busDict['bstopidx'])
-        print("정류장 이름 : ",busDict['stopName'])
-        print("정류장 ID : ",busDict['nodeid'])
-        nodeLine.append(busDict)
-    nodeLine = tuple(nodeLine)
-    return nodeLine
+    return response
 
 #test
 #print(getBusArrivalInfo(185000302))

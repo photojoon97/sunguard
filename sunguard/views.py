@@ -1,4 +1,5 @@
 from json import dumps
+from multiprocessing import context
 from xml.etree import ElementTree
 from decimal import *
 from django.http import Http404, JsonResponse #JsonResponse: HttpResponse의 subclass로, JSON-encoded response를 생성할수 있게 해준다.
@@ -20,8 +21,8 @@ def showNearStops():
     try:
         #GPS 가져와야 함
         #https ssl 인증서 필요함
-        longitude = 129.129570420443
-        latitude = 35.192761930615
+        longitude = 129.075639
+        latitude = 35.179041
 
         position = (latitude, longitude)
         condition = (
@@ -84,12 +85,37 @@ def getBusStopPosition(StopId):
 #각 버스가 갖고있는 노선번호를 주고 노선 순서를 가져오는 함수
 #정류장 순서, 정류장 이름, ...
 def retrieveLineInfo(request):
-    if request.method == 'GET':
-        lineId = request.GET['busStop_id']
-        line = getLineInfo(lineId) #노선에 있는 정류장 정보를 불러옴
-        for stop in line:
-            stopId = getBusStopPosition() # line에 있는 정류장에서 정류장id를 넘겨줌
-    return line
+    busLine = []
+    if request.method == 'GET' and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        try:
+            departure = request.GET['departure'] # 출발 정류장 ID
+            selectedBusLine = request.GET['selectedBusLine'] # 선택한 버스 노선
+
+            print("departure : " + departure + "\nselectedBusLine : " + selectedBusLine)
+
+            buslineText = getLineInfo(selectedBusLine) #노선에 있는 정류장 정보를 불러옴
+            print("buslineText : ", buslineText)
+
+            rootElement = ElementTree.fromstring(buslineText)
+            iterElement = rootElement.iter(tag = 'item') #item 태그 아래 자식 노드를 순회하기 위해 지정
+            for element in iterElement:
+                busDict = {}
+                busDict['stopName'] = element.findtext('bstopnm')
+                busDict['nodeid'] = element.findtext('nodeid')
+                busDict['bstopidx'] = element.findtext('bstopidx')
+                """
+                print("=" * 60)
+                print("정류장 순번 : ",busDict['bstopidx'])
+                print("정류장 이름 : ",busDict['stopName'])
+                print("정류장 ID : ",busDict['nodeid'])
+                """
+                busLine.append(busDict)
+            return HttpResponse(dumps(busLine), content_type = "application/json")
+        except:
+            return JsonResponse({"status" : "fail", "msg" : "departure or selectedBusLine does not exist"})
+    else:
+        return JsonResponse({"status":"fail", "msg":"Not a vaild request"})
+        
 
 # 메인페이지 html을 렌더함.
 # 근처에 있는 출발 정류장 리스트를 만들어서 nearStops에 context에 담아서 렌더
