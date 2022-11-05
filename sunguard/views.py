@@ -171,6 +171,22 @@ def askSeat(request):
             print('azimuth : ', azimuth)
             recommendSeat = '준비 중'
             #if condition : #route_azi 와 azimuth를 보고 해가 안 드는 자리를 찾아야 함..
+            #360 + (routeAzimuth - 180) ~ routeAzimuth
+            # testcase 만들어서 검증해보기
+            if routeAzimuth - 180 < 0: #진행방향의 오른쪽 범위를 구함
+                f = routeAzimuth
+                r = 360 + (routeAzimuth - 180)
+                if azimuth > f and azimuth < r: #태양의 방위각이 진행방향의 오른쪽 범위에 포함되면
+                    recommendSeat = "오른쪽"  #오른쪽 자리 추천
+                else:
+                    recommendSeat = "왼쪽"
+            elif routeAzimuth - 180 >= 0:
+                f =  routeAzimuth
+                r = routeAzimuth - 180
+                if azimuth > f and azimuth < r:
+                    recommendSeat = "오른쪽"
+                else:
+                    recommendSeat = "왼쪽"
         else:
             recommendSeat = 'Take a seat anywhere'
 
