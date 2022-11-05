@@ -2,11 +2,12 @@ from platform import node
 from xml.etree import ElementTree
 from sunguard.models import busStopInfo
 from urllib.parse import urlencode, unquote, quote_plus
-from key import servicekey
+#from key import servicekey
 from datetime import date
 import requests
 import decimal
 
+servicekey = "NUg3JoF3qG4D0ta4dKvgz9lo4SMpZ03u1Rh1SLHQZcJUEDitfcC3vNeKGjMqVr9dW45y52Z9GWj2yQsMeggVLQ=="
 
 
 #정류장 정보를 데이터베이스에 입력
@@ -25,16 +26,6 @@ def getBusStopInfo():
         data.gpsY = decimal.Decimal(element.find('gpsy').text)
         data.busStopType = element.find('stoptype').text
         data.save()
-
-def getSolaInfo(latitude, longitude):
-    today = date.today()
-    locdate =  today.strftime("%Y%m%d")
-    url = 'http://apis.data.go.kr/B090041/openapi/service/SrAltudeInfoService/getLCSrAltudeInfo'
-
-    params = {'serviceKey': servicekey, 'locdate': locdate,'latitude':latitude, 'longitude':longitude, 'dnYn':'y'}
-    response = requests.get(url, params=params)
-
-    return response
 
 #버스 도착 정보 조회 (정류장ID를 기준)
 def getBusArrivalInfo(busStopId):
@@ -55,8 +46,7 @@ def findCityCode():
     print(response)
     
 def getLineInfo(lineId):
-    nodeLine = []
-    #response까지 init 함수로 묶기
+    
     url = "http://apis.data.go.kr/6260000/BusanBIMS/busInfoByRouteId"
     params ={'serviceKey' : servicekey, 'lineid': lineId}
     response = requests.get(url, params= params)
@@ -64,5 +54,12 @@ def getLineInfo(lineId):
     
     return response
 
-#test
-#print(getBusArrivalInfo(185000302))
+def getSolaInfo(latitude, longitude):
+    today = date.today()
+    locdate =  today.strftime("%Y%m%d")
+    url = 'http://apis.data.go.kr/B090041/openapi/service/SrAltudeInfoService/getLCSrAltudeInfo'
+
+    params = {'serviceKey': servicekey, 'locdate': locdate,'latitude':latitude, 'longitude':longitude, 'dnYn':'y'}
+    response = requests.get(url, params=params)
+
+    return response

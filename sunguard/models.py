@@ -1,8 +1,10 @@
 from email.policy import default
+from pyexpat import model
 from django.db import models
 
 # 버스정류장 필드
 class busStopInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     busStopNo = models.IntegerField(default=0)
     busStopId = models.IntegerField(default=0)
     busStopName = models.CharField(max_length=20)
@@ -21,3 +23,5 @@ class busStopInfo(models.Model):
     def returnGPS(self):
         data = {'lat': self.gpsY, 'log':self.gpsX}
         return data
+
+#id = models.AutoField(primary_key=True, unique = True)

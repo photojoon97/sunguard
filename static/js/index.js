@@ -80,11 +80,33 @@ $(document).on("click","#arrival_buses_table_body > tr", function(){
                 $("#destination_select").empty(); //기존 옵션 제거
                 
                 $.each(busLineInfo , function(i){
-                        var option = $("<option value" + busLineInfo[i].stopNum + ">" + busLineInfo[i].stopName+"</option>");
+                        var option = $("<option value = " + busLineInfo[i].stopId + ">" + busLineInfo[i].stopName+"</option>");
                         $("#destination_select").append(option);
                 });
                 
             };
+        }
+    });
+});
+
+//도착 버튼 클릭시 좌석 추천 
+$(document).on("click", "#destination_bnt", function(){
+    var departure = getCookie("departure", 1);
+    var selectedDestination = $("#destination_select option:selected").val(); //선택된 옵션값
+
+    console.log("selectedDestination : " + selectedDestination);
+    var departureID = getCookie('departure',1)
+
+    $.ajax({
+        url : 'askSeat/',
+        type : 'GET',
+        data : {
+            'departureID' : departureID,
+            'destinationID' : selectedDestination,
+        },
+        dataType : 'json',
+        success : function(recommendSeat){
+            alert(JSON.stringify(recommendSeat));
         }
     });
 });

@@ -94,15 +94,15 @@ def retrieveLineInfo(request):
             print("departure : " + departure + "\nselectedBusLine : " + selectedBusLine)
 
             buslineText = getLineInfo(selectedBusLine) #노선에 있는 정류장 정보를 불러옴
-            print("buslineText : ", buslineText)
+            #print("buslineText : ", buslineText)
 
             rootElement = ElementTree.fromstring(buslineText)
             iterElement = rootElement.iter(tag = 'item') #item 태그 아래 자식 노드를 순회하기 위해 지정
             for element in iterElement:
                 busDict = {}
                 busDict['stopName'] = element.findtext('bstopnm')
-                busDict['nodeid'] = element.findtext('nodeid')
-                busDict['bstopidx'] = element.findtext('bstopidx')
+                busDict['stopId'] = element.findtext('nodeid')
+                busDict['stopOrder'] = element.findtext('bstopidx')
                 """
                 print("=" * 60)
                 print("정류장 순번 : ",busDict['bstopidx'])
@@ -116,6 +116,35 @@ def retrieveLineInfo(request):
     else:
         return JsonResponse({"status":"fail", "msg":"Not a vaild request"})
         
+def askSeat(request):
+    if request.method == 'GET' and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        departureID = request.GET['departureID']
+        destinationID = request.GET['destinationID']
+        departureStopInfo = {'latitude' : None ,'longitude' : None}
+        destinationStopInfo = {'latitude' : None ,'longitude' : None}
+
+        print("departureID : ", departureID)
+        print("destinationID : ", destinationID)
+
+        departure = busStopInfo.objects.get(busStopId = departureID)
+        departure.gpsX
+        departureStopInfo['latitude'] = departure.gpsX
+        departureStopInfo['longitude'] = departure.gpsY
+
+        destination = busStopInfo.objects.get(busStopId = destinationID)
+        
+        destinationStopInfo['latitude'] = destination.gpsX
+        destinationStopInfo['longitude'] = destination.gpsY
+
+        print("출발 좌표 : ", departureStopInfo['latitude'], departureStopInfo['longitude'], end=',' )
+        print("도착 좌표 : ", destinationStopInfo['latitude'], destinationStopInfo['longitude'], end=',' )
+        
+        context = {
+            "departureStopInfo" : departureStopInfo,
+            "destinationStopInfo" : destinationStopInfo
+        }
+        return HttpResponse(dumps(context), content_type = "application/json")
+
 
 # 메인페이지 html을 렌더함.
 # 근처에 있는 출발 정류장 리스트를 만들어서 nearStops에 context에 담아서 렌더
