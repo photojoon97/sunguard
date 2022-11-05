@@ -2,12 +2,11 @@ from platform import node
 from xml.etree import ElementTree
 from sunguard.models import busStopInfo
 from urllib.parse import urlencode, unquote, quote_plus
-#from key import servicekey
+from key import servicekey
 from datetime import date
 import requests
 import decimal
 
-servicekey = "NUg3JoF3qG4D0ta4dKvgz9lo4SMpZ03u1Rh1SLHQZcJUEDitfcC3vNeKGjMqVr9dW45y52Z9GWj2yQsMeggVLQ=="
 
 
 #정류장 정보를 데이터베이스에 입력
@@ -54,12 +53,15 @@ def getLineInfo(lineId):
     
     return response
 
-def getSolaInfo(latitude, longitude):
+def getSolaInfo():
+    location = "부산"
     today = date.today()
     locdate =  today.strftime("%Y%m%d")
-    url = 'http://apis.data.go.kr/B090041/openapi/service/SrAltudeInfoService/getLCSrAltudeInfo'
+    url = 'http://apis.data.go.kr/B090041/openapi/service/SrAltudeInfoService/getAreaSrAltudeInfo'
 
-    params = {'serviceKey': servicekey, 'locdate': locdate,'latitude':latitude, 'longitude':longitude, 'dnYn':'y'}
+    #params = {'serviceKey': servicekey, 'locdate': locdate,'latitude':latitude, 'longitude':longitude, 'dnYn':'y'}
+    params = {'ServiceKey' : servicekey, 'location' : location, 'locdate' : locdate}
     response = requests.get(url, params=params)
+    response = response.content.decode('utf-8')
 
     return response

@@ -5,16 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sunguard</title>
-    <!--JQuery(ajax)-->
-    <!--서비스 할 때는 다운로드해서 import로 변경-->
+    <!--서비스 할 때는 jquery(ajax)다운로드해서 import로 변경-->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=../../../static/js/apikey/apikey"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../../../static/js/index.js"></script>
 </head>
 <body>
     <div>
-        <div>
-            <!--지도영역-->
-        </div>
+        <!--지도 영역-->
+        <div id="map" style="width:500px;height:400px;"></div>
         <div>
             <h3>출발 정류장</h3>
             <form onsubmit="return false";>
@@ -55,4 +54,13 @@
         </div>
     </div>
 </body>
+<script>
+    var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+    var options = { //지도를 생성할 때 필요한 기본 옵션
+    	center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+    	level: 3 //지도의 레벨(확대, 축소 정도)
+    };
+    
+    var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+</script>
 </html>
