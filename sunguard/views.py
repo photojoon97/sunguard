@@ -20,28 +20,34 @@ def busStopInfoApi(request):
 def showNearStops(request):
     #gpsX = logitude gpsY = latitude
     #haversine 사용
-    try:
-        #GPS 가져와야 함
-        #https ssl 인증서 필요함
-        longitude = 129.075639
-        latitude = 35.179041
-
-        position = (latitude, longitude)
-        condition = (
-            Q(gpsX__range = (longitude - 0.005, longitude + 0.005)) | Q(gpsY__range = (latitude - 0.0025, latitude + 0.0025))
-        )
-        busStop_Info = (
-            busStopInfo.objects.filter(condition)
-        )
-        #busStop_Info = busStop_Info[0:10]
-        #print("busStop_Info : \n",busStop_Info)
-        nearBusStopInfo = [info for info in busStop_Info if haversine(position, (info.gpsY, info.gpsX)) <= 0.3] #범위
-        nearBusStopInfo = tuple(nearBusStopInfo)
-        #print("nearBusStopInfo : \n",nearBusStopInfo)
-        #print("\n\ninfo[0] : ", nearBusStopInfo[0].busStopName)
-    except:
-        print('erorr')
-    return nearBusStopInfo
+    if request.method == 'GET' and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        try:
+            nearStops = []
+            latitude = float(request.GET['lat'])
+            longitude = float(request.GET['lng'])
+            position = (latitude, longitude)
+            condition = (
+                Q(gpsX__range = (longitude - 0.005, longitude + 0.005)) | Q(gpsY__range = (latitude - 0.0025, latitude + 0.0025))
+            )
+            busStop_Info = (
+                busStopInfo.objects.filter(condition)
+            )
+            nearBusStopInfo = [info for info in busStop_Info if haversine(position, (info.gpsY, info.gpsX)) <= 0.5] #범위
+            print('nearBusStopInfo : ', nearBusStopInfo[0].busStopName)
+            nearBusStopInfo = nearBusStopInfo[:11]
+            for stop in nearBusStopInfo:
+                stopDict = {}
+                stopDict['stopName'] = stop.busStopName
+                stopDict['stopID'] = stop.busStopId
+                nearStops.append(stopDict)
+            
+            context = {
+                'nearStops' : nearStops
+            }
+            
+            return HttpResponse(dumps(context), content_type = "application/json")
+        except:
+            return JsonResponse({"status":"fail", "msg":"nearStops Does not exist"})
 
 #사용자가 선택한 버스 정류장의 ID를 넘겨받아 해당 버스 정류장의 정보(도착 버스, 남은 시간, 정류장 이름)를 조회
 def busArrivalInfo(request):
@@ -218,6 +224,7 @@ def route_azimuth(start_lat, start_lng, end_lat, end_lng):
 # 근처에 있는 출발 정류장 리스트를 만들어서 nearStops에 context에 담아서 렌더
 # nearStops를 받는 html에서도 같은 이름 사용해야 함.
 def index(request):
+    """
     nearStops = showNearStops(request)
     print("stops = ",nearStops)
     try:
@@ -226,6 +233,7 @@ def index(request):
         }
     except nearStops.DoesNotExist:
         raise Http404("nearStops does not exist")
-    return render(request, 'sunguard/index.html', context)
+    """
+    return render(request, 'sunguard/index.html')
 
 

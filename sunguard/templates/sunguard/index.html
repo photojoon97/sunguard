@@ -33,11 +33,7 @@
                     <h3>출발 정류장</h3>
                     <form onsubmit="return false" ;>
                         <div class="form-group">
-                            <select name="departureStop" class="form-control">
-                                {% for nearStop in nearStops %}
-                                <option value={{nearStop.busStopId}} id="busStop_id">{{nearStop.busStopName}}</option>
-                                {% endfor %}
-                            </select>
+                            <select name="departureStop" id="departureStop" class="form-control"></select>
                             <button id="departure_btn" class="btn btn-default">선택</button>
                         </div>
                     </form>

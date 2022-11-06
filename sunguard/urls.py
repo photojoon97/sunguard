@@ -12,7 +12,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('arrivalbuses/', views.busArrivalInfo, name='busArrivalInfo'),
     path('stopinfoapi/', views.busStopInfoApi, name='busStopInfoApi'),
-    path('nearstopinfo/', views.showNearStops, name='showNearStops'),
+    path('showNearStops/', views.showNearStops, name='showNearStops'),
     path('retrieveLineInfo/', views.retrieveLineInfo, name='retrieveLineInfo'),
     path('askSeat/', views.askSeat, name='askSeat')
 ]

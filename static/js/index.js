@@ -26,8 +26,16 @@ $(document).on('click', '#refresh_btn', function(){
         },
         dataType : 'json',
         async : false,
-        success : function(nearStops){
-
+        success : function(data){
+            if(data != undefined){
+                nearStops = data.nearStops
+                //alert(JSON.stringify(nearStops));
+                $("#departureStop").empty(); //기존 옵션 제거
+                $.each(nearStops , function(i){
+                        var option = $("<option value = " + nearStops[i].stopID + ">" + nearStops[i].stopName+"</option>");
+                        $("#departureStop").append(option);
+                });
+            }
         }
     })
 });
