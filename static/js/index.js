@@ -8,6 +8,30 @@ function setCookie(cookie_name, value, days){
     var cookie_value = escape(value) + ((days == null) ? '' : '; expires=' + exdate.toUTCString());
     document.cookie = cookie_name + '=' + cookie_value;
 }
+
+//위치를 새로고침하고 주변 정류장을 다시 불러오는 함수
+$(document).on('click', '#refresh_btn', function(){
+    var lat = getCookie('newLat');
+    var lng = getCookie('newLng');
+
+    console.log('새로운 위도 : ',  lat);
+    console.log('새로운 경도 : ', lng);
+
+    $.ajax({
+        url: 'showNearStops/',
+        type: 'GET',
+        data : {
+            'lat' : lat,
+            'lng' : lng
+        },
+        dataType : 'json',
+        async : false,
+        success : function(nearStops){
+
+        }
+    })
+});
+
 // 쿠키를 불러오는 함수
 function getCookie(cookie_name) {
     var x, y;
@@ -91,6 +115,7 @@ $(document).on("click","#arrival_buses_table_body > tr", function(){
 
 //도착 버튼 클릭시 좌석 추천 
 $(document).on("click", "#destination_bnt", function(){
+    
     var departure = getCookie("departure", 1);
     var selectedDestination = $("#destination_select option:selected").val(); //선택된 옵션값
 
@@ -105,6 +130,7 @@ $(document).on("click", "#destination_bnt", function(){
             'destinationID' : selectedDestination,
         },
         dataType : 'json',
+        async : false,
         success : function(recommendSeat){
             alert(JSON.stringify(recommendSeat));
         }
@@ -112,37 +138,40 @@ $(document).on("click", "#destination_bnt", function(){
 });
 
 //출발 정류장 서버에 알리고 서버로부터 해당 정류장의 도착 정보 받아오기
-$(document).ready(function(){
-    $("#departure_btn").click(function(){
-        let departure = $("select[name=departureStop]").val(); //select option 값 
-        console.log("departure option : ", departure);
-        
-        setCookie("departure",departure, 1); //출발 정류장 쿠키에 저장 -> 출발지/목적지 설정에 사용
+$(document).on("click", "#departure_btn", function(){
+  
+    let departure = $("select[name=departureStop]").val(); //select option 값 
+    console.log("departure option : ", departure);
+    
+    setCookie("departure",departure, 1); //출발 정류장 쿠키에 저장 -> 출발지/목적지 설정에 사용
 
-        $.ajax({
-            url: 'arrivalbuses/',
-            type : 'GET',
-            data : {
-                'busStop_id' : departure,
-            },
-            dataType : 'json',
-            async : false,
-            success : function(response){ //응답을 기다리고 있다가 data 넘어오면 동작
-                //선택한 버스를 넘겨주고, 버스도착 정보를 받아서 테이블로 뿌려줌
-                if(response != undefined && response != ''){
-                    var data = response.arrivalBuses;
-                    //alert(JSON.stringify(data.arrivalBuses[0].busNum));
-                    var str = '<tr>';
-                    $.each(data , function(i){
-                        str += '<td>' + data[i].busNum + '</td><td>' + data[i].busLine + '</td><td>' + data[i].remainTime + '</td><td>' + data[i].remainStops + '</td>';
-                        str += '</tr>';
-                    });
-                    $("#arrival_buses_table_body").html(str);
-                };
-            }
-        });
-
-        //console.log("선택 정류장 : " + getCookie("departure"));
+    $.ajax({
+        url: 'arrivalbuses/',
+        type : 'GET',
+        data : {
+            'busStop_id' : departure,
+        },
+        dataType : 'json',
+        async : false,
+        success : function(response){ //응답을 기다리고 있다가 data 넘어오면 동작
+            //선택한 버스를 넘겨주고, 버스도착 정보를 받아서 테이블로 뿌려줌
+            if(response != undefined && response != ''){
+                var data = response.arrivalBuses;
+                //alert(JSON.stringify(data.arrivalBuses[0].busNum));
+                var str = '<tr>';
+                $.each(data , function(i){
+                    str += '<td>' + data[i].busNum + '</td><td>' + data[i].busLine + '</td><td>' + data[i].remainTime + '</td><td>' + data[i].remainStops + '</td>';
+                    str += '</tr>';
+                });
+                $("#arrival_buses_table_body").html(str);
+            };
+        }
     });
+    //console.log("선택 정류장 : " + getCookie("departure"));
+});
+
+//페이지 처음 로드시 근처 정류장 가져오기
+$(document).ready(function(){
+
 });
 

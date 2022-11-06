@@ -10,9 +10,9 @@ urlpatterns = [
     #kwargs 키워드 인수들은 view에 사전형으로 전달
     #name URL에 이름을 지으면, 템플릿을 포함한 Django어디에서나 명확하게 참조 가능
     path('', views.index, name='index'),
-    path('arrivalbuses/', views.busArrivalInfo, name='arrival_buses'),
-    path('stopinfoapi/', views.busStopInfoApi, name='busStopApi'),
-    path('nearstopinfo/', views.showNearStops, name='nearStopApi'),
+    path('arrivalbuses/', views.busArrivalInfo, name='busArrivalInfo'),
+    path('stopinfoapi/', views.busStopInfoApi, name='busStopInfoApi'),
+    path('nearstopinfo/', views.showNearStops, name='showNearStops'),
     path('retrieveLineInfo/', views.retrieveLineInfo, name='retrieveLineInfo'),
     path('askSeat/', views.askSeat, name='askSeat')
 ]

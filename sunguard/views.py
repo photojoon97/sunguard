@@ -17,10 +17,9 @@ def busStopInfoApi(request):
     getBusStopInfo() #함수 실행 테스트
     return HttpResponse("call getBusStopInfo.")
 
-def showNearStops():
+def showNearStops(request):
     #gpsX = logitude gpsY = latitude
     #haversine 사용
-
     try:
         #GPS 가져와야 함
         #https ssl 인증서 필요함
@@ -47,7 +46,6 @@ def showNearStops():
 #사용자가 선택한 버스 정류장의 ID를 넘겨받아 해당 버스 정류장의 정보(도착 버스, 남은 시간, 정류장 이름)를 조회
 def busArrivalInfo(request):
     comingBuses = []
-    count = {'cnt' : 0}
     if request.method == 'GET' and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest': #is_ajax()는 장고 4.x에서 삭제됨
         try:
             busStopId = request.GET['busStop_id'] #선택한 출발 정류장ID
@@ -67,9 +65,7 @@ def busArrivalInfo(request):
                 except:
                     busDict['remainTime'] = "운행 종료"
                     busDict['remainStops'] = "운행 종료"
-                count['cnt'] += 1
                 comingBuses.append(busDict)
-            comingBuses.append(count)
             context = {
                 'arrivalBuses' : comingBuses,
             }
@@ -144,7 +140,7 @@ def askSeat(request):
         print("도착 좌표 : ", destinationStopInfo['latitude'], destinationStopInfo['longitude'])
 
         routeAzimuth = route_azimuth(departureStopInfo['latitude'],  departureStopInfo['longitude'], destinationStopInfo['latitude'], destinationStopInfo['longitude'])
-
+        routeAzimuth  = float(routeAzimuth)
         solarAltitude = getSolaInfo()
         #print(solarAltitude)
         
@@ -158,7 +154,7 @@ def askSeat(request):
             now_str = '12'
         elif now >= 15 and now < 18:
             now_str = '15'
-        elif now >= 18:
+        elif now >= 18 and now < 20:
             now_str = '18'
         else:
             now_str = 'night'
@@ -168,6 +164,9 @@ def askSeat(request):
         if now_str != 'night':
             rootElement = ElementTree.fromstring(solarAltitude)
             azimuth = rootElement.find(azimuth_path + now_str).text
+            azimuth = azimuth.split('˚')[:1]
+            azimuth = ''.join(azimuth)
+            azimuth = float(azimuth)
             print('azimuth : ', azimuth)
             recommendSeat = '준비 중'
             #if condition : #route_azi 와 azimuth를 보고 해가 안 드는 자리를 찾아야 함..
@@ -194,7 +193,7 @@ def askSeat(request):
             "departureStopInfo" : departureStopInfo,
             "destinationStopInfo" : destinationStopInfo,
             "routeAzimuth" : routeAzimuth,
-            'azimuth' : azimuth,
+            #'azimuth' : azimuth,
             'recommendSeat' : recommendSeat,
         }
         return HttpResponse(dumps(context), content_type = "application/json")
@@ -219,7 +218,7 @@ def route_azimuth(start_lat, start_lng, end_lat, end_lng):
 # 근처에 있는 출발 정류장 리스트를 만들어서 nearStops에 context에 담아서 렌더
 # nearStops를 받는 html에서도 같은 이름 사용해야 함.
 def index(request):
-    nearStops = showNearStops()
+    nearStops = showNearStops(request)
     print("stops = ",nearStops)
     try:
         context = {

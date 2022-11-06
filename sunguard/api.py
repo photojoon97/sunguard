@@ -2,12 +2,13 @@ from platform import node
 from xml.etree import ElementTree
 from sunguard.models import busStopInfo
 from urllib.parse import urlencode, unquote, quote_plus
-from key import servicekey
 from datetime import date
 import requests
 import decimal
+import os
 
 
+servicekey = os.environ.get("servicekey")
 
 #정류장 정보를 데이터베이스에 입력
 def getBusStopInfo():
@@ -45,7 +46,7 @@ def findCityCode():
     print(response)
     
 def getLineInfo(lineId):
-    
+
     url = "http://apis.data.go.kr/6260000/BusanBIMS/busInfoByRouteId"
     params ={'serviceKey' : servicekey, 'lineid': lineId}
     response = requests.get(url, params= params)
