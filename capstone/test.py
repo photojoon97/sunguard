@@ -36,40 +36,66 @@ def getLineInfo(lineId):
     nodeLine = tuple(nodeLine)
     return nodeLine
 
+def testCase(routeAzimuth, azimuth):
+    routeAzimuth = routeAzimuth
+    azimuth = azimuth
+    recommendSeat = ""
+    right = '오른쪽'
+    left = '왼쪽'
 
-time = dt.datetime.now()
-now = time.hour
-now_str = ''
-print('now\' type : ', type(now))
-print('now : ', now)
-if now >= 9 and now < 12:
-    now_str = '09'
-elif now >= 12 and now < 15:
-    now_str = '12'
-elif now >= 15 and now < 18:
-    now_str = '15'
-elif now >= 18:
-    now_str = '18'
-else:
-    now_str = time.strftime('%H')
-print('현재 시간은 : ', now_str)
+    if (routeAzimuth - 180) < 0: #진행방향의 오른쪽 범위를 구함
+        front = routeAzimuth
+        rear = 360 + (routeAzimuth - 180) 
+        if (azimuth > front and azimuth < 360 ): #태양의 방위각이 진행방향의 오른쪽 범위에 포함되면
+            if azimuth < rear:
+                print(1)
+                recommendSeat = left
+            else:
+                print(2)
+                recommendSeat = right
+        elif (azimuth < front) and azimuth > 0:
+            if azimuth < rear:
+                print(3)
+                recommendSeat = right
+            else:
+                print(4)
+                recommendSeat = left
+
+    elif routeAzimuth - 180 >= 0:
+        front =  routeAzimuth
+        rear = routeAzimuth - 180
+        if (azimuth < front and azimuth < 360):
+            if azimuth < rear:
+                print(5)
+                recommendSeat = left
+            else:
+                print(6)
+                recommendSeat = right
+        elif (azimuth > front) and azimuth > 0:
+            if azimuth > rear:
+                print(7)
+                recommendSeat = left
+            else:
+                print(8)
+                recommendSeat = right
+    return recommendSeat
+
+
 """
-for i in range(0,25):
-    now = str(i)
-    print(type(now))
-    if i >= 9 and i < 12:
-        now_str = '09'
-        print('현재 시간 : ' + now + '시는 ' + now_str + ' class')
-    elif i >= 12 and i < 15:
-        now_str = '12'
-        print('현재 시간 : ' + now + '시는 ' + now_str + ' class')
-    elif i >= 15 and i < 18:
-        now_str = '15'
-        print('현재 시간 : ' + now + '시는 ' + now_str + ' class')
-    elif i >= 18:
-        now_str = '18'
-        print('현재 시간 : ' + now + '시는 ' + now_str + ' class')
-    else:
-        now_str = str(i)
-        print('현재 시간 : ' + now + '시는 ' + now_str + ' class')
+
 """
+
+azimuth = {
+    '09' : 129,
+    '12' : 175,
+    '15' : 222,
+    '18' : 252
+    }
+
+
+
+for routeAzimuth in range(10, 360, 30):
+    for key in azimuth:
+        result = testCase(routeAzimuth, azimuth[key])
+        print('진행 방향 : ' + str(routeAzimuth) + ', 태양 방위각 : ' + str(azimuth[key]) + ",  결과 : ", result)
+        print("=" * 60)
