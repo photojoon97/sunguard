@@ -166,7 +166,7 @@ def askSeat(request):
         else:
             now_str = 'night'
         print('현재 시간은 : ', now_str)
-        print('azim_path : ', azimuth_path + now_str )
+        #print('azim_path : ', azimuth_path + now_str )
         
         if now_str != 'night':
             right = 'Right side'
@@ -180,50 +180,42 @@ def askSeat(request):
             recommendSeat = '준비 중'
             #if condition : #route_azi 와 azimuth를 보고 해가 안 드는 자리를 찾아야 함..
             #360 + (routeAzimuth - 180) ~ routeAzimuth
-            # testcase 만들어서 검증해보기
             if (routeAzimuth - 180) < 0: #진행방향의 오른쪽 범위를 구함
                 front = routeAzimuth
                 rear = 360 + (routeAzimuth - 180) 
                 if (azimuth > front and azimuth < 360 ): #태양의 방위각이 진행방향의 오른쪽 범위에 포함되면
                     if azimuth < rear:
-                        print(1)
                         recommendSeat = left
                     else:
-                        print(2)
                         recommendSeat = right
                 elif (azimuth < front) and azimuth > 0:
                     if azimuth < rear:
-                        print(3)
                         recommendSeat = right
                     else:
-                        print(4)
                         recommendSeat = left
-        
+
             elif routeAzimuth - 180 >= 0:
                 front =  routeAzimuth
                 rear = routeAzimuth - 180
                 if (azimuth < front and azimuth < 360):
                     if azimuth < rear:
-                        print(5)
                         recommendSeat = left
                     else:
-                        print(6)
                         recommendSeat = right
                 elif (azimuth > front) and azimuth > 0:
                     if azimuth > rear:
-                        print(7)
                         recommendSeat = left
                     else:
-                        print(8)
                         recommendSeat = right
         else:
             recommendSeat = 'Take a seat anywhere'
+            azimuth = 0
 
         context = {
             "departureStopInfo" : departureStopInfo,
             "destinationStopInfo" : destinationStopInfo,
             "routeAzimuth" : routeAzimuth,
-            #'azimuth' : azimuth,
+            'sunAzimuth' : azimuth,
             'recommendSeat' : recommendSeat,
         }
         return HttpResponse(dumps(context), content_type = "application/json")

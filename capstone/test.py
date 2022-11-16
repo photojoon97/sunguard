@@ -94,7 +94,7 @@ azimuth = {
 
 
 
-for routeAzimuth in range(10, 360, 30):
+for routeAzimuth in range(0, 360, 30):
     for key in azimuth:
         result = testCase(routeAzimuth, azimuth[key])
         print('진행 방향 : ' + str(routeAzimuth) + ', 태양 방위각 : ' + str(azimuth[key]) + ",  결과 : ", result)

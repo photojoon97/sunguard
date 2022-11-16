@@ -1,0 +1,14 @@
+asgiref==3.5.2
+backports.zoneinfo==0.2.1
+beautifulsoup4==4.11.1
+certifi==2022.9.24
+charset-normalizer==2.1.1
+Django==4.1.2
+django-dotenv==1.4.2
+haversine==2.7.0
+idna==3.4
+numpy==1.23.4
+requests==2.28.1
+soupsieve==2.3.2.post1
+sqlparse==0.4.3
+urllib3==1.26.12

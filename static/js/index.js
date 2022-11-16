@@ -121,6 +121,10 @@ $(document).on("click","#arrival_buses_table_body > tr", function(){
     });
 });
 
+function popupShow(){
+    $(".popup").show();
+}
+
 //도착 버튼 클릭시 좌석 추천 
 $(document).on("click", "#destination_bnt", function(){
     
@@ -140,7 +144,12 @@ $(document).on("click", "#destination_bnt", function(){
         dataType : 'json',
         async : false,
         success : function(recommendSeat){
-            alert(JSON.stringify(recommendSeat));
+            var recommend = recommendSeat.recommendSeat
+            console.log(recommendSeat.recommendSeat);
+            $("#popup_content").text(recommend);
+            //$(".popup").show();
+            const popup = document.querySelector('#popup');
+            popup.classList.remove('hide');
         }
     });
 });
@@ -183,3 +192,7 @@ $(document).ready(function(){
 
 });
 
+function closePopup(){
+    const popup = document.querySelector('#popup');
+    popup.classList.add('hide');
+}
