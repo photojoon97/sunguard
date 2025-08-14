@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    open-in-view: true
+  config:
+    import:
+      - classpath:application-db.yml
+      - classpath:application-security.yml
+      - classpath:application-busan-bus-api.yml
+      - classpath:application-solar-api.yml
+      - classpath:application-jwt.yml
