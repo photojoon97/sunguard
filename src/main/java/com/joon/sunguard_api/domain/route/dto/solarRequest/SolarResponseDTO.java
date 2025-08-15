@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class SolarResponseDTO {
 
     @JsonProperty("locdate")
-    String date;
+    String locdate;
     String location;
 
     Double latitude;
@@ -37,7 +37,7 @@ public class SolarResponseDTO {
 
     @Builder
     public SolarResponseDTO(String date, String location, Double latitude, Double longitude, Double latitudeNum, Double longitudeNum, String azimuth_09, String altitude_09, String azimuth_12, String altitude_12, String azimuth_15, String altitude_15, String azimuth_18, String altitude_18, String altitudeMeridian) {
-        this.date = date;
+        this.locdate = date;
         this.location = location;
         this.latitude = latitude;
         this.longitude = longitude;

@@ -1,7 +1,9 @@
 package com.joon.sunguard_api.domain.busstop.controller;
 
+import com.joon.sunguard_api.domain.busstop.dto.request.ArrivalBusRequestDto;
 import com.joon.sunguard_api.domain.busstop.dto.request.NearbyStopsRequest;
 import com.joon.sunguard_api.domain.busstop.dto.response.BusArrivalResponse;
+import com.joon.sunguard_api.domain.busstop.dto.response.BusStopArrivalResponseDto;
 import com.joon.sunguard_api.domain.busstop.dto.response.BusStopResponse;
 import com.joon.sunguard_api.domain.busstop.service.BusstopService;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +39,8 @@ public class Controller {
     }
 
     //버스 정류장_ID를 기준으로 도착 예정 버스 조회
-    @GetMapping("/stops/{stopId}/arrivals")
-    public List<BusArrivalResponse> findBusArrivalsByStopId(@PathVariable String stopId) {
-        return busstopService.getRealtimeArrivingBus(stopId);
+    @GetMapping("/stops/arrivals")
+    public List<BusStopArrivalResponseDto> findBusArrivalsByStopId(ArrivalBusRequestDto requestDto) {
+        return busstopService.getRealtimeArrivingBus(requestDto);
     }
 }

@@ -1,12 +1,13 @@
 package com.joon.sunguard_api.domain.busstop.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.joon.sunguard_api.domain.busstop.dto.request.ArrivalBusRequestDto;
 import com.joon.sunguard_api.domain.busstop.dto.response.BusStopArrivalResponseDto;
 import com.joon.sunguard_api.domain.busstop.dto.request.NearbyStopsRequest;
-import com.joon.sunguard_api.domain.busstop.dto.response.BusArrivalResponse;
 import com.joon.sunguard_api.domain.busstop.dto.response.BusStopResponse;
 import com.joon.sunguard_api.domain.busstop.entity.BusStop;
 import com.joon.sunguard_api.domain.busstop.repository.BusStopRepository;
+import com.joon.sunguard_api.domain.busstop.repository.BusanBusRepository;
 import com.joon.sunguard_api.global.config.BusanBusApi;
 import com.joon.sunguard_api.global.exception.CustomException;
 import com.joon.sunguard_api.global.exception.ErrorCode;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +29,7 @@ public class BusstopService {
     private final BusanBusApi busanBusApi;
     private final OpenApiCallContext openApiCallContext;
     private final BusStopRepository busStopRepository;
+    private final BusanBusRepository busanBusRepository;
 
     //정류장 이름으로 버스 정류장 검색
     public List<BusStopResponse> findBusStopsByName(String stopName) {
@@ -88,53 +89,52 @@ public class BusstopService {
     }
 
     //실시간 버스 도착 정보 조회 서비스
-    public List<BusArrivalResponse> getRealtimeArrivingBus(String busStopId) {
+    public List<BusStopArrivalResponseDto> getRealtimeArrivingBus(ArrivalBusRequestDto requestDto) {
         String url = busanBusApi.getUrl().getArrival_url();
         String key = busanBusApi.getKey();
+        String bstopid = requestDto.getBstopid();
 
         // DB에서 해당 정류장에 도착하는 버스 목록 조회 (lineId, lineNo만 포함)
-        List<BusStop> dbBuses = busStopRepository.findListByStopId(busStopId);
+        List<BusStop> dbBuses = busStopRepository.findListByStopId(bstopid);
 
-        if(dbBuses.isEmpty()){
+        if (dbBuses.isEmpty()) {
             throw new CustomException(ErrorCode.BUS_NOT_FOUND);
         }
 
         // 외부 API 호출
         Object rawResult = openApiCallContext.excute(
-                "listDtoStrategy",
+                "multipleResponseStrategy",
                 key,
                 url,
-                busStopId,
+                requestDto,
                 new TypeReference<WrapperResponse<BusStopArrivalResponseDto>>() {
                 }
         );
 
         List<BusStopArrivalResponseDto> apiBuses = (rawResult instanceof List) ? (List<BusStopArrivalResponseDto>) rawResult : List.of();
 
-        // API 결과를 lineId를 키로 하는 Map으로 변환하여 검색 성능 향상
-        Map<String, BusStopArrivalResponseDto> apiBusMap = apiBuses.stream()
-                .collect(Collectors.toMap(BusStopArrivalResponseDto::getLineId, info -> info, (info1, info2) -> info1));
-
-        // DB 조회 결과와 API 조회 결과를 조합하여 최종 응답 DTO 생성
-        return dbBuses.stream()
-                .map(dbBus -> {
-                    BusStopArrivalResponseDto apiInfo = apiBusMap.get(dbBus.getStopId());
-                    String remainingTime = "정보 없음";
-                    String remainingStops = "정보 없음";
-
-                    if (apiInfo != null) {
-                        remainingTime = apiInfo.getRemainingTime() != null ? apiInfo.getRemainingTime() + "분" : "정보 없음";
-                        remainingStops = apiInfo.getRemainingStops() != null ? apiInfo.getRemainingStops() + "개" : "정보 없음";
-                    }
-
-                    return BusArrivalResponse.builder()
-                            .lineId(dbBus.getStopId())
-                            .lineNo(dbBus.getStopNo())
-                            .remainingTime(remainingTime)
-                            .remainingStops(remainingStops)
-                            .build();
-                }).collect(Collectors.toList());
+        //TODO: 도착 예정 정보가 없을 때, 기본값 표시
+        return apiBuses.stream().map(this::setDefaultValues).collect(Collectors.toList());
     }
+
+    // 기본값 설정 메소드
+    private BusStopArrivalResponseDto setDefaultValues(BusStopArrivalResponseDto dto) {
+        String defaultValue = "정보 없음";
+        if(dto.getRemainingTime() == null){
+            dto.setRemainingTime(defaultValue);
+        }
+        if(dto.getRemainingStops() == null){
+            dto.setRemainingStops(defaultValue);
+        }
+        if(dto.getNextRemainingTime() == null){
+            dto.setNextRemainingTime(defaultValue);
+        }
+        if(dto.getNextRemainingStops() == null){
+            dto.setNextRemainingStops(defaultValue);
+        }
+        return dto;
+    }
+
 }
 
 

@@ -12,8 +12,6 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BusStopArrivalResponseDto {
 
-    @JsonProperty("arsno")
-    private String arsno; // 정류소 번호
 
     @JsonProperty("bstopid")
     private String bstopid; // 정류소 ID
@@ -30,14 +28,11 @@ public class BusStopArrivalResponseDto {
     @JsonProperty("min1")
     private String remainingTime; // 첫 번째 도착 예정 버스의 남은 시간(분)
 
-    @JsonProperty("station1")
+    @JsonProperty(value = "station1", defaultValue = "정보 없음")
     private String remainingStops; // 첫 번째 도착 예정 버스의 남은 정류장 수
 
-    @JsonProperty("carno1")
-    private String carNo1; // 첫 번째 버스 차량 번호
-
-    @JsonProperty("lowplate1")
-    private String lowPlate1; // 첫 번째 버스 저상버스 여부
+    //@JsonProperty("lowplate1")
+    //private String lowPlate1; // 첫 번째 버스 저상버스 여부
 
     @JsonProperty("min2")
     private String nextRemainingTime; // 두 번째 도착 예정 버스의 남은 시간(분)
@@ -45,9 +40,7 @@ public class BusStopArrivalResponseDto {
     @JsonProperty("station2")
     private String nextRemainingStops; // 두 번째 도착 예정 버스의 남은 정류장 수
 
-    @JsonProperty("carno2")
-    private String carNo2; // 두 번째 버스 차량 번호
+    //@JsonProperty("lowplate2")
+    //private String lowPlate2; // 두 번째 버스 저상버스 여부
 
-    @JsonProperty("lowplate2")
-    private String lowPlate2; // 두 번째 버스 저상버스 여부
 }

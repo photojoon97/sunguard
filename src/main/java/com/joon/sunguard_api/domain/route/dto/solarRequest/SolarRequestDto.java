@@ -10,5 +10,5 @@ import lombok.Setter;
 public class SolarRequestDto {
 
     private String location;
-    private String date;
+    private String locdate;
 }

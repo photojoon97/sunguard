@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@Component
+@Component("multipleResponseStrategy")
 @RequiredArgsConstructor
 public class MultipleResponseStrategy implements OpenApiCallStrategy {
 
