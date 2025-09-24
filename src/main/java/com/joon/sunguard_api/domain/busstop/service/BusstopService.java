@@ -29,7 +29,6 @@ public class BusstopService {
     private final BusanBusApi busanBusApi;
     private final OpenApiCallContext openApiCallContext;
     private final BusStopRepository busStopRepository;
-    private final BusanBusRepository busanBusRepository;
 
     //정류장 이름으로 버스 정류장 검색
     public List<BusStopResponse> findBusStopsByName(String stopName) {
@@ -113,28 +112,8 @@ public class BusstopService {
 
         List<BusStopArrivalResponseDto> apiBuses = (rawResult instanceof List) ? (List<BusStopArrivalResponseDto>) rawResult : List.of();
 
-        //TODO: 도착 예정 정보가 없을 때, 기본값 표시
-        return apiBuses.stream().map(this::setDefaultValues).collect(Collectors.toList());
+        return apiBuses.stream().map(BusStopArrivalResponseDto::setDefaultValues).collect(Collectors.toList());
     }
-
-    // 기본값 설정 메소드
-    private BusStopArrivalResponseDto setDefaultValues(BusStopArrivalResponseDto dto) {
-        String defaultValue = "정보 없음";
-        if(dto.getRemainingTime() == null){
-            dto.setRemainingTime(defaultValue);
-        }
-        if(dto.getRemainingStops() == null){
-            dto.setRemainingStops(defaultValue);
-        }
-        if(dto.getNextRemainingTime() == null){
-            dto.setNextRemainingTime(defaultValue);
-        }
-        if(dto.getNextRemainingStops() == null){
-            dto.setNextRemainingStops(defaultValue);
-        }
-        return dto;
-    }
-
 }
 
 

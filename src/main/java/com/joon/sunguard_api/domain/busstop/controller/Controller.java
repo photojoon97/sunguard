@@ -2,12 +2,10 @@ package com.joon.sunguard_api.domain.busstop.controller;
 
 import com.joon.sunguard_api.domain.busstop.dto.request.ArrivalBusRequestDto;
 import com.joon.sunguard_api.domain.busstop.dto.request.NearbyStopsRequest;
-import com.joon.sunguard_api.domain.busstop.dto.response.BusArrivalResponse;
 import com.joon.sunguard_api.domain.busstop.dto.response.BusStopArrivalResponseDto;
 import com.joon.sunguard_api.domain.busstop.dto.response.BusStopResponse;
 import com.joon.sunguard_api.domain.busstop.service.BusstopService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

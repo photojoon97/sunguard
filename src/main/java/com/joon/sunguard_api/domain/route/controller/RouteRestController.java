@@ -1,30 +1,31 @@
 package com.joon.sunguard_api.domain.route.controller;
 
-import com.joon.sunguard_api.domain.route.dto.RouteResponse;
 import com.joon.sunguard_api.domain.route.dto.solarRequest.SolarResponseDTO;
-import com.joon.sunguard_api.domain.route.service.PathfinderService;
-import com.joon.sunguard_api.domain.route.service.RouteDataService;
+import com.joon.sunguard_api.domain.route.serviceV2.Node;
+import com.joon.sunguard_api.domain.route.serviceV2.Pathfinder;
 import com.joon.sunguard_api.domain.route.util.RecommendSeat;
-import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/routes")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RouteRestController {
-    private final PathfinderService pathfinderService;
+    private final Pathfinder pathfinder;
     private final RecommendSeat recommendSeat;
 
-    //경로 탐색
-    @GetMapping("/userRoute")
-    public RouteResponse findUserRoute(
+
+    @GetMapping("/userRouteV2")
+    public List<Node> findUserRouteV2(
             @RequestParam("departureId") String departureId,
-            @RequestParam("destinationId") String destinationId) {
-        return pathfinderService.findShortestPath(departureId, destinationId);
+            @RequestParam("destinationId") String destinationId
+    ){
+        return pathfinder.findRoute(departureId, destinationId);
     }
 
     @GetMapping("/sun")

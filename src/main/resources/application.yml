@@ -8,3 +8,7 @@ spring:
       - classpath:application-busan-bus-api.yml
       - classpath:application-solar-api.yml
       - classpath:application-jwt.yml
+logging:
+  level:
+    reactor.netty.http.client: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG

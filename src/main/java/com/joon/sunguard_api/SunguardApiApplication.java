@@ -1,14 +1,19 @@
 package com.joon.sunguard_api;
 
-import jakarta.annotation.PostConstruct;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+
 
 import java.net.URL;
 
 @SpringBootApplication()
 public class SunguardApiApplication {
+
+	static {
+		// 네이티브 전송 비활성화
+		System.setProperty("io.netty.resolver.dns.preferNativeTransport", "false");
+	}
 
 	public static void main(String[] args) {
 		URL resource = SunguardApiApplication.class.getClassLoader().getResource("application.yml");

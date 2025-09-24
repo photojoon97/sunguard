@@ -15,6 +15,7 @@ public class WebClientConfig {
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
 
         return WebClient.builder()
+
                 .uriBuilderFactory(factory)
                 .defaultHeader(HttpHeaders.CONNECTION, "keep-alive")
                 .build();

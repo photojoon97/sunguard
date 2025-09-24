@@ -13,13 +13,13 @@ import lombok.Setter;
 @Setter
 public class BusStop {
     @Id
-    @Column(name = "stop_id")
+    @Column(name = "bus_stop_id")
     private String stopId;
 
-    @Column(name = "stop_name")
+    @Column(name = "station_name")
     private String stopName;
 
-    @Column(name = "stop_no")
+    @Column(name = "bus_stop_no")
     private String stopNo;
 
     @Column(name = "gps_x")
@@ -28,7 +28,7 @@ public class BusStop {
     @Column(name = "gps_y")
     private Double gpsY;
 
-    @Column(name = "stop_type")
+    @Column(name = "bus_stop_type")
     private String stopType;
 
 }

@@ -42,5 +42,20 @@ public class BusStopArrivalResponseDto {
 
     //@JsonProperty("lowplate2")
     //private String lowPlate2; // 두 번째 버스 저상버스 여부
-
+    public static BusStopArrivalResponseDto setDefaultValues(BusStopArrivalResponseDto dto) {
+        String defaultValue = "정보 없음";
+        if(dto.getRemainingTime() == null){
+            dto.setRemainingTime(defaultValue);
+        }
+        if(dto.getRemainingStops() == null){
+            dto.setRemainingStops(defaultValue);
+        }
+        if(dto.getNextRemainingTime() == null){
+            dto.setNextRemainingTime(defaultValue);
+        }
+        if(dto.getNextRemainingStops() == null){
+            dto.setNextRemainingStops(defaultValue);
+        }
+        return dto;
+    }
 }

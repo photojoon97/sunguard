@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Component
@@ -29,17 +31,30 @@ public class PublicApiFetcher {
         Map<String, String>paramMap = xmlMapper.convertValue(request, Map.class);
         paramMap.put("ServiceKey", api_key);
 
+        StringBuilder queryBuilder = new StringBuilder();
+        for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+            if (queryBuilder.length() > 0) {
+                queryBuilder.append("&");
+            }
+            // ServiceKey는 인코딩 안 함
+            if ("ServiceKey".equals(entry.getKey())) {
+                queryBuilder.append(entry.getKey()).append("=").append(entry.getValue());
+            } else {
+                queryBuilder.append(entry.getKey())
+                        .append("=")
+                        .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
+            }
+        }
+        String fullUrl = api_url + "?" + queryBuilder.toString();
+
         try{
             // API를 호출하여 XML 응답을 문자열로 받습니다.
             String xmlResponse = webClient.get()
-                    .uri(api_url, uriBuilder -> {
-                        paramMap.forEach(uriBuilder::queryParam);
-                        return uriBuilder.build();
-                    })
+                    .uri(fullUrl)
                     .retrieve()
                     .bodyToMono(String.class)
                     .doOnSuccess(response -> log.debug("Raw XML response : {}", response))
-                    .doOnError(error -> log.error("API 호출 실패. URL: {}, Params: {}", api_url, paramMap, error))
+                    .doOnError(error -> log.error("API 호출 실패. Path: {}, Params: {}", api_url, paramMap, error))
                     .onErrorMap(error -> new CustomException(ErrorCode.API_CALL_ERROR, error.getMessage()))
                     .block();
 

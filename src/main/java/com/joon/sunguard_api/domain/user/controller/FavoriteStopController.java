@@ -1,6 +1,5 @@
 package com.joon.sunguard_api.domain.user.controller;
 
-import com.joon.sunguard_api.domain.route.service.PathfinderService;
 import com.joon.sunguard_api.domain.security.dto.CustomOAuth2User;
 import com.joon.sunguard_api.domain.user.dto.FavoriteStopDto;
 import com.joon.sunguard_api.domain.user.service.FavoriteStopsService;

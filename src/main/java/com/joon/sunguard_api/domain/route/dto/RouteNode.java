@@ -4,6 +4,7 @@
 // =================================================================
 package com.joon.sunguard_api.domain.route.dto;
 
+import com.joon.sunguard_api.domain.route.util.Directions;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class RouteNode implements Comparable<RouteNode> {
     private final String lineId;
     private final int transfers; // 환승 횟수
     private final double distance; //역 사이 이동 거리
-    private final String direction; //역 사이 진행방향
+    private final Directions direction; //역 사이 진행방향
 
     @Override
     public int compareTo(RouteNode other) {

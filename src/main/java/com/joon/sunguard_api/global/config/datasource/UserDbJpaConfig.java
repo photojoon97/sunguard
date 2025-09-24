@@ -31,7 +31,7 @@ public class UserDbJpaConfig {
             @Qualifier("userdbDataSource") DataSource dataSource) {
 
         HashMap<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.hbm2ddl.auto", "none"); //none으로 변경
+        properties.put("hibernate.hbm2ddl.auto", "create"); //none으로 변경
         properties.put("hibernate.format_sql", "true");
 
         return builder

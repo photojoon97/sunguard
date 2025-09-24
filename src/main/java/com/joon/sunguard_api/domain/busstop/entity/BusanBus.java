@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "busan_bus")
+@Table(name = "bus_info")
 @Getter
 @Setter
 public class BusanBus {
@@ -17,7 +17,7 @@ public class BusanBus {
     @Column(name = "line_id")
     private String lineId;
 
-    @Column(name = "line_no", nullable = false)
+    @Column(name = "bus_line_num", nullable = false)
     private String lineNo;
 
     @Column(name = "bus_type", nullable = false)
@@ -29,7 +29,7 @@ public class BusanBus {
     @Column(name = "end_point")
     private String endPoint;
 
-    @Column(name = "company")
+    @Column(name = "company_id")
     private String company;
 
     @Column(name = "arrival_interval") // 배차 간격

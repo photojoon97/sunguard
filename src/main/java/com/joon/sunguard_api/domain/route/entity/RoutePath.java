@@ -19,14 +19,14 @@ public class RoutePath {
     @Column(name = "line_id", insertable = false, updatable = false)
     private String lineId;
 
-    @Column(name = "stop_id", insertable = false, updatable = false)
+    @Column(name = "bus_stop_id", insertable = false, updatable = false)
     private String stopId;
 
-    @Column(name = "sequence", nullable = false)
+    @Column(name = "seq", nullable = false)
     private Integer sequence;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stop_id")
+    @JoinColumn(name = "bus_stop_id")
     private BusStop busStop;
 
     @ManyToOne(fetch = FetchType.LAZY)
