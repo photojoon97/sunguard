@@ -1,7 +1,6 @@
-package com.joon.sunguard_api.domain.route.serviceV2;
+package com.joon.sunguard_api.domain.route.service;
 
 import com.joon.sunguard_api.domain.busstop.entity.BusStop;
-import com.joon.sunguard_api.domain.route.service.RouteDataService;
 
 import com.joon.sunguard_api.domain.route.util.CalculateDirection;
 import com.joon.sunguard_api.domain.route.util.CalculateDistance;
@@ -9,6 +8,7 @@ import com.joon.sunguard_api.domain.route.util.Directions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Service
+@Component
 @Primary
 @RequiredArgsConstructor
 public class AstarPathfinding implements Pathfinder {
 
-    private final RouteDataService routeDataService;
+    private final RouteDataLoader routeDataLoader;
     private final CalculateDistance calculateDistance;
     private final CalculateDirection calculateDirection;
 
@@ -31,23 +31,23 @@ public class AstarPathfinding implements Pathfinder {
     @Override
     public List<Node> findRoute(String startStopId, String endStopId) {
 
-        Map<String, List<String>> nightlineToStops = routeDataService.getNightlineToStops();
+        Map<String, List<String>> nightlineToStops = routeDataLoader.getNightlineToStops();
 
         //context 초기화
-        BusStop startStop = routeDataService.getStopInfo().get(startStopId);
-        BusStop endStop = routeDataService.getStopInfo().get(endStopId);
+        BusStop startStop = routeDataLoader.getStopInfo().get(startStopId);
+        BusStop endStop = routeDataLoader.getStopInfo().get(endStopId);
 
-        List<String> startStopList = routeDataService.getStopNameToIds().get(startStop.getStopName());
-        List<String> endStopList = routeDataService.getStopNameToIds().get(endStop.getStopName());
+        List<String> startStopList = routeDataLoader.getStopNameToIds().get(startStop.getStopName());
+        List<String> endStopList = routeDataLoader.getStopNameToIds().get(endStop.getStopName());
 
         PathfindingContext context = new PathfindingContext(startStopId, endStopId);
         context.allStartStopIds.addAll(startStopList);
         context.allEndStopIds.addAll(endStopList);
 
         for (String curStopId : context.allStartStopIds) {
-            BusStop curBusStop = routeDataService.getStopInfo().get(curStopId);
+            BusStop curBusStop = routeDataLoader.getStopInfo().get(curStopId);
 
-            for (String curLindId : routeDataService.getStopToLines().get(curStopId)) {
+            for (String curLindId : routeDataLoader.getStopToLines().get(curStopId)) {
                 //Node 객체 생성
                 double h = heuristic(curBusStop, endStop);
                 Node node = new Node(0.0 + h, 0.0, curStopId, curLindId, 0.0, null, 0);
@@ -70,7 +70,7 @@ public class AstarPathfinding implements Pathfinder {
                 continue;
             }
 
-            BusStop curStop = routeDataService.getStopInfo().get(cur.getStopId());
+            BusStop curStop = routeDataLoader.getStopInfo().get(cur.getStopId());
 
             //도착
             if (checkGoalNode(context, cur)) {
@@ -78,12 +78,12 @@ public class AstarPathfinding implements Pathfinder {
             }
 
             //인접 정류장들을 방문해야 함
-            List<String> stops = routeDataService.getLineToStops().get(lineId);
+            List<String> stops = routeDataLoader.getLineToStops().get(lineId);
             int curIdx = stops.indexOf(cur.getStopId());
 
             if (curIdx != -1 && curIdx < stops.size() - 1) {
                 String nextStopId = stops.get(curIdx + 1);
-                BusStop nextStop = routeDataService.getStopInfo().get(nextStopId);
+                BusStop nextStop = routeDataLoader.getStopInfo().get(nextStopId);
 
                 double distance = calculateDistance.getDistnace
                         (curStop.getGpsY(), curStop.getGpsX(),
@@ -115,7 +115,7 @@ public class AstarPathfinding implements Pathfinder {
 
     public void transfer(PathfindingContext context, Node cur, BusStop endStop) {
         if (cur.getTransfers() < context.getMAX_TRANSFER()) {
-            List<String> lines = routeDataService.getStopToLines().get(cur.getStopId());
+            List<String> lines = routeDataLoader.getStopToLines().get(cur.getStopId());
 
             for (String line : lines) {
 
@@ -125,7 +125,7 @@ public class AstarPathfinding implements Pathfinder {
 
                     Node neighborNode = new Node(0, tentativeGScore, cur.getStopId(), line, 0, null, cur.getTransfers() + 1);
                     if (tentativeGScore < context.getGScore().getOrDefault(neighborNode, Double.MAX_VALUE)) {
-                        BusStop busStop = routeDataService.getStopInfo().get(cur.getStopId());
+                        BusStop busStop = routeDataLoader.getStopInfo().get(cur.getStopId());
                         double h = heuristic(busStop, endStop);
                         neighborNode.setfScore(tentativeGScore + h);
 

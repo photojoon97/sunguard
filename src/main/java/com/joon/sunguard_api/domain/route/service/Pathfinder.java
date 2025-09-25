@@ -1,4 +1,4 @@
-package com.joon.sunguard_api.domain.route.serviceV2;
+package com.joon.sunguard_api.domain.route.service;
 
 import java.util.List;
 

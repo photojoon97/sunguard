@@ -1,8 +1,9 @@
 package com.joon.sunguard_api.domain.route.controller;
 
 import com.joon.sunguard_api.domain.route.dto.solarRequest.SolarResponseDTO;
-import com.joon.sunguard_api.domain.route.serviceV2.Node;
-import com.joon.sunguard_api.domain.route.serviceV2.Pathfinder;
+import com.joon.sunguard_api.domain.route.service.Node;
+import com.joon.sunguard_api.domain.route.service.PathfidingService;
+import com.joon.sunguard_api.domain.route.service.Pathfinder;
 import com.joon.sunguard_api.domain.route.util.RecommendSeat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/routes")
 @RequiredArgsConstructor
 public class RouteRestController {
-    private final Pathfinder pathfinder;
+    private final PathfidingService pathfidingService;
     private final RecommendSeat recommendSeat;
 
 
@@ -25,7 +26,7 @@ public class RouteRestController {
             @RequestParam("departureId") String departureId,
             @RequestParam("destinationId") String destinationId
     ){
-        return pathfinder.findRoute(departureId, destinationId);
+        return pathfidingService.findRoute(departureId, destinationId);
     }
 
     @GetMapping("/sun")
