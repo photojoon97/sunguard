@@ -1,17 +1,14 @@
 package com.joon.sunguard_api.domain.route.controller;
 
+import com.joon.sunguard_api.domain.route.dto.RouteResponse;
 import com.joon.sunguard_api.domain.route.dto.solarRequest.SolarResponseDTO;
-import com.joon.sunguard_api.domain.route.service.Node;
 import com.joon.sunguard_api.domain.route.service.PathfidingService;
-import com.joon.sunguard_api.domain.route.service.Pathfinder;
 import com.joon.sunguard_api.domain.route.util.RecommendSeat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/routes")
@@ -21,8 +18,8 @@ public class RouteRestController {
     private final RecommendSeat recommendSeat;
 
 
-    @GetMapping("/userRouteV2")
-    public List<Node> findUserRouteV2(
+    @GetMapping("/userRoute")
+    public RouteResponse findUserRouteV2(
             @RequestParam("departureId") String departureId,
             @RequestParam("destinationId") String destinationId
     ){

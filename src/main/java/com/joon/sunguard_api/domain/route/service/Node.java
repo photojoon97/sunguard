@@ -10,12 +10,16 @@ import java.util.Objects;
 public class Node {
 
     private double fScore; // G-Score(현재까지 비용) + H-Score(예상 잔여 비용) (PriorityQueue에서의 기준값)
+
     private final double gScore; // 실제 이동 비용
     private final String stopId;
+    private final String stopName;
     private final String lineId;
+    private final String busNo;
     private final double distance; //역 사이 이동 거리
     private final Directions direction;
-    private final int transfers;
+    private int transfers;
+
 
     @Override
     public boolean equals(Object o) {
@@ -37,4 +41,5 @@ public class Node {
     public void setfScore(double fScore) {
         this.fScore = fScore;
     }
+
 }

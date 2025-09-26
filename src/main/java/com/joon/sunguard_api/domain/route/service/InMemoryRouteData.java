@@ -97,6 +97,11 @@ public class InMemoryRouteData implements RouteDataLoader {
     }
 
     @Override
+    public Map<String, String> getLineInfo() {
+        return lineInfo;
+    }
+
+    @Override
     public Map<String, List<String>> getStopNameToIds() {
         return stopNameToIds;
     }

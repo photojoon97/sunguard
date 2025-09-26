@@ -7,6 +7,7 @@ import java.util.Map;
 
 public interface RouteDataLoader {
     Map<String, BusStop> getStopInfo();
+    Map<String, String> getLineInfo();
     Map<String, List<String>> getStopNameToIds();
     Map<String, List<String>> getStopToLines();
     Map<String, List<String>> getLineToStops();

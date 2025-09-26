@@ -7,8 +7,6 @@ import java.util.*;
 @Getter
 public class PathfindingContext {
 
-    private final int MAX_TRANSFER = 2;
-
     private final String startId;
     private final String endId;
 
