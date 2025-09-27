@@ -113,36 +113,36 @@ public class AstarPathfinding implements Pathfinder {
 
                 }
             }
-            transfer(context, cur, endStop);
+            if (cur.getTransfers() < MAX_TRANSFER) {
+                transfer(context, cur, endStop);
+            }
         }
         return null;
     }
 
 
     public void transfer(PathfindingContext context, Node cur, BusStop endStop) {
-        int transfer = cur.getTransfers() + 1;
-        if (transfer <= MAX_TRANSFER) {
-            List<String> lines = routeDataLoader.getStopToLines().get(cur.getStopId());
+        List<String> lines = routeDataLoader.getStopToLines().get(cur.getStopId());
 
-            for (String line : lines) {
+        for (String line : lines) {
 
-                if (!line.equals(cur.getLineId())) {
+            if (!line.equals(cur.getLineId())) {
+                String busNo = routeDataLoader.getLineInfo().get(line);
+                double tentativeGScore = context.getGScore().get(cur) + TRANSFER_PENALTY;
+                int transfer = cur.getTransfers() + 1;
 
-                    String busNo = routeDataLoader.getLineInfo().get(line);
-                    double tentativeGScore = context.getGScore().get(cur) + TRANSFER_PENALTY;
-
-                    Node neighborNode = new Node(0, tentativeGScore, cur.getStopId(), cur.getStopName(), line, busNo, 0.0, null, transfer);
-                    if (tentativeGScore < context.getGScore().getOrDefault(neighborNode, Double.MAX_VALUE)) {
-                        BusStop busStop = routeDataLoader.getStopInfo().get(cur.getStopId());
-                        double h = heuristic(busStop, endStop);
-                        neighborNode.setfScore(tentativeGScore + h);
-                        context.getCameFrom().put(neighborNode, cur);
-                        context.getGScore().put(neighborNode, tentativeGScore);
-                        context.getOpenSet().add(neighborNode);
-                    }
+                Node neighborNode = new Node(0, tentativeGScore, cur.getStopId(), cur.getStopName(), line, busNo, 0.0, null, transfer);
+                if (tentativeGScore < context.getGScore().getOrDefault(neighborNode, Double.MAX_VALUE)) {
+                    BusStop busStop = routeDataLoader.getStopInfo().get(cur.getStopId());
+                    double h = heuristic(busStop, endStop);
+                    neighborNode.setfScore(tentativeGScore + h);
+                    context.getCameFrom().put(neighborNode, cur);
+                    context.getGScore().put(neighborNode, tentativeGScore);
+                    context.getOpenSet().add(neighborNode);
                 }
             }
         }
+
     }
 
     public RouteResponse reconstructPath(Map<Node, Node> cameFrom, Node cur) {
@@ -150,7 +150,6 @@ public class AstarPathfinding implements Pathfinder {
         Map<Directions, Double> totalDirection = new HashMap<>();
         double totalDistance = 0.0;
         Directions mostDirection = null;
-        int totalTransfer = 0;
 
         totalPath.add(cur); // 최종 목적지 노드 추가
         Node current = cur;
@@ -160,33 +159,37 @@ public class AstarPathfinding implements Pathfinder {
             Double tempDistance = current.getDistance();
             Directions tempDirec = current.getDirection();
 
-            totalDistance += tempDistance; // 👉 총 이동거리 누적
-            totalTransfer += current.getTransfers(); // 👉 환승 횟수 누적
+
+            if(tempDistance != null && tempDistance > 0.0){
+                totalDistance += tempDistance;
+            }
 
             current = cameFrom.get(current);
             totalPath.add(current);
 
-            totalDirection.compute(tempDirec, (key, value) ->
-                    value == null ? tempDistance : value + tempDistance
-            );
+            if(tempDirec != null && tempDistance != null){
+                totalDirection.compute(tempDirec, (key, value) ->
+                        value == null ? tempDistance : value + tempDistance
+                );
+            }
         }
 
         Collections.reverse(totalPath);
+        int totalTransfers = calculateTotalTransfers(totalPath);
 
         // 가장 많이 이동한 방향 계산
         Optional<Map.Entry<Directions, Double>> max =
                 totalDirection.entrySet().stream().max(Map.Entry.comparingByValue());
 
         if (max.isPresent()) {
-            Map.Entry<Directions, Double> m = max.get();
-            mostDirection = m.getKey();
+            mostDirection = max.get().getKey();
         }
 
         return RouteResponse.builder()
                 .steps(totalPath)
                 .totalDirection(mostDirection)
                 .totalDistance(totalDistance)
-                .transferCount(totalTransfer)
+                .transferCount(totalTransfers)
                 .build();
     }
 
@@ -200,6 +203,25 @@ public class AstarPathfinding implements Pathfinder {
         } else {
             return false;
         }
+    }
+
+    private int calculateTotalTransfers(List<Node> path) {
+        if (path.size() <= 1) {
+            return 0;
+        }
+
+        int transferCount = 0;
+        String prevLineId = path.get(0).getLineId();
+
+        for (int i = 1; i < path.size(); i++) {
+            String currentLineId = path.get(i).getLineId();
+            if (!prevLineId.equals(currentLineId)) {
+                transferCount++;
+            }
+            prevLineId = currentLineId;
+        }
+
+        return transferCount;
     }
 
     public boolean checkContainGoalNode(PathfindingContext context, Node cur) {
