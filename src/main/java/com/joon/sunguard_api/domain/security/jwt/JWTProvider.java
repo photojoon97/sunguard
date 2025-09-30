@@ -4,6 +4,7 @@ import com.joon.sunguard_api.domain.security.dto.CustomOAuth2User;
 import com.joon.sunguard_api.domain.security.dto.UserDTO;
 import com.joon.sunguard_api.domain.security.service.RefreshTokenService;
 import com.joon.sunguard_api.domain.security.util.CookieMangement;
+import com.joon.sunguard_api.domain.security.util.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class JWTProvider {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername(username);
-        userDTO.setRole(role);
+        userDTO.setRole(Role.valueOf(role));
 
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
 

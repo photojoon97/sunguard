@@ -20,7 +20,7 @@ public class RecommendSeat {
     private final SolarApi solarApi;
     private final OpenApiCallContext openApiCallContext;
 
-    public SolarResponseDTO getSolarInfo(String location, String date){
+    public Double getSolarInfo(String location, String date) {
         String key = solarApi.getKey();
         String url = solarApi.getUrl();
 
@@ -34,7 +34,8 @@ public class RecommendSeat {
                 key,
                 url,
                 requestDto,
-                new TypeReference<WrapperResponse<SolarResponseDTO>>() {}
+                new TypeReference<WrapperResponse<SolarResponseDTO>>() {
+                }
         );
 
         SolarResponseDTO responseDTO = (rawResult instanceof SolarResponseDTO) ? (SolarResponseDTO) rawResult : null;
@@ -44,10 +45,15 @@ public class RecommendSeat {
             return null; // 또는 예외 처리
         }
 
-        return responseDTO;
+        return calcCurrentAzimuth(responseDTO);
     }
 
-    public Directions clacShadowDirection(SolarResponseDTO SolarInfo){
+    public Double calcRelativeAzimith(double sunAzimuth, double busDirection){
+        return (sunAzimuth - busDirection + 360) % 360;
+    }
+
+
+    public Double calcCurrentAzimuth(SolarResponseDTO SolarInfo) {
         double solarAzimuth = 0;
         double nextSolarAzimuth = 0;
         double nowAzimuth;
@@ -57,33 +63,34 @@ public class RecommendSeat {
         int currentMinute = LocalDateTime.now().getMinute();
 
 
-        if(currentHour < 9 || currentHour > 18){
+        if (currentHour < 9 || currentHour > 18) {
             //해가 없을 경우 처리
             return null;
         }
 
-        switch ((currentHour - 9) / 3){
+        switch ((currentHour - 9) / 3) {
             case 0:
                 startHour = 9;
                 solarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_09());
-                nextSolarAzimuth = Double.parseDouble( SolarInfo.getAzimuth_12());
+                nextSolarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_12());
                 break;
             case 1:
                 startHour = 12;
-                solarAzimuth = Double.parseDouble( SolarInfo.getAzimuth_12());
+                solarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_12());
                 nextSolarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_15());
                 break;
             case 2:
                 startHour = 15;
                 solarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_15());
                 nextSolarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_18());
-                break;
+
+            /*    break;
             case 3:
                 startHour = 18;
                 solarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_18());
                 double shadowAzimuth = (solarAzimuth + 180) % 360;
                 return convertAzimuthToDirection(shadowAzimuth);
-
+            */
             default:
                 startHour = 0;
         }
@@ -91,11 +98,9 @@ public class RecommendSeat {
         int elapsedMinutes = (currentHour - startHour) * 60 + currentMinute; //  현재 태양 방위각 계산 (선형 보간)
         double totalAzimuthChange = nextSolarAzimuth - solarAzimuth; //3시간 동안의 총 방위각 변화량
         double azimuthPerMinute = totalAzimuthChange / 180.0; // 분당 방위각 변화량
-        double currentAzimuth = solarAzimuth + (azimuthPerMinute * elapsedMinutes); // 현재 시간의 태양 방위각 추정
-        double shadowAzimuth = (currentAzimuth + 180) % 360; //그림자 방위각 계산 (태양의 정반대 방향)
+        // 현재 시간의 태양 방위각 추정
 
-        return convertAzimuthToDirection(shadowAzimuth);
-
+        return solarAzimuth + (azimuthPerMinute * elapsedMinutes);
     }
 
     private Directions convertAzimuthToDirection(double azimuth) {

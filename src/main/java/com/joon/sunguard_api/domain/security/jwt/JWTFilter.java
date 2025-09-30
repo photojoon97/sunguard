@@ -3,6 +3,7 @@ package com.joon.sunguard_api.domain.security.jwt;
 import com.joon.sunguard_api.domain.security.dto.CustomOAuth2User;
 import com.joon.sunguard_api.domain.security.dto.UserDTO;
 import com.joon.sunguard_api.domain.security.util.CookieMangement;
+import com.joon.sunguard_api.domain.security.util.Role;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,7 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
             String role = jwtUtil.getRole(accessToken);
             UserDTO userDto = new UserDTO();
             userDto.setUsername(username);
-            userDto.setRole(role);
+            userDto.setRole(Role.valueOf(role));
 
             CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
             Authentication authentication = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
@@ -51,7 +52,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
 
         }catch (ExpiredJwtException e){
-
 
             logger.warn("Access token 만료됨. Refresh token으로 재발급 시도");
             Authentication authentication = jwtProvider.reissueToken(request, response);

@@ -1,7 +1,6 @@
 package com.joon.sunguard_api.domain.route.controller;
 
 import com.joon.sunguard_api.domain.route.dto.RouteResponse;
-import com.joon.sunguard_api.domain.route.dto.solarRequest.SolarResponseDTO;
 import com.joon.sunguard_api.domain.route.service.PathfidingService;
 import com.joon.sunguard_api.domain.route.util.RecommendSeat;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class RouteRestController {
     }
 
     @GetMapping("/sun")
-    public SolarResponseDTO getSolarInfo(){
+    public Double getSolarInfo(){
         return recommendSeat.getSolarInfo("부산", "20250807");
     }
 }

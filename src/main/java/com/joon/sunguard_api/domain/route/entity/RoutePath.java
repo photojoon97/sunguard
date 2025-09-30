@@ -4,12 +4,10 @@ import com.joon.sunguard_api.domain.busstop.entity.BusStop;
 import com.joon.sunguard_api.domain.busstop.entity.BusanBus;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = " route_paths")
 @Getter
-@Setter
 public class RoutePath {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

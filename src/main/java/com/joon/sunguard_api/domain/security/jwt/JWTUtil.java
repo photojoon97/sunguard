@@ -1,5 +1,6 @@
 package com.joon.sunguard_api.domain.security.jwt;
 
+import com.joon.sunguard_api.domain.security.util.Role;
 import com.joon.sunguard_api.global.config.JwtConfig;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,7 @@ public class JWTUtil {
         return Jwts.builder()
                 .claim("category", category)
                 .claim("username", username)
-                .claim("role", role)
+                .claim("role", Role.valueOf(role))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)

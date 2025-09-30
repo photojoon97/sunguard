@@ -7,6 +7,7 @@ import com.joon.sunguard_api.domain.security.dto.OAuth2Response;
 import com.joon.sunguard_api.domain.security.dto.UserDTO;
 import com.joon.sunguard_api.domain.security.entity.UserEntity;
 import com.joon.sunguard_api.domain.security.repository.UserRepository;
+import com.joon.sunguard_api.domain.security.util.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -32,7 +33,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Object grantedAuthorities = oAuth2User.getAttributes().get("Granted Authorities");
         Object email = oAuth2User.getAttributes().get("email");
 
-        log.info("oAuth2User : {}  id : {}  Granted Authorities : {}    email : {}", login, id, grantedAuthorities, email );
+        log.info("oAuth2User : {}  id : {}  Granted Authorities : {}    email : {}", login, id, grantedAuthorities, email);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
@@ -49,22 +50,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // Optional로 받고, orElseGet을 사용하여 신규/기존 사용자 처리
         UserEntity userEntity = userRepository.findByUsername(username)
-                //map()에서 Optional<UserEntity> 타입 반환
                 .map(existingUser -> {
-                    // 기존 사용자인 경우: 정보 업데이트
-                    existingUser.setEmail(oAuth2Response.getEmail());
-                    existingUser.setName(oAuth2Response.getName());
+                    existingUser.updateUserEntity(oAuth2Response.getName(), oAuth2Response.getEmail());
                     return existingUser;
                 })
-                .orElseGet(() -> {
-                    // 신규 사용자인 경우: 새로 생성
-                    UserEntity newUser = new UserEntity();
-                    newUser.setUsername(username);
-                    newUser.setEmail(oAuth2Response.getEmail());
-                    newUser.setName(oAuth2Response.getName());
-                    newUser.setRole("ROLE_USER");
-                    return newUser;
-                }); //기존 사용자여도 메서드 체인으로 orElseGet을 거치면서 최종적으로 UserEntity 뱉음 (내부 람다식은 실행되지 않음)
+                .orElseGet(() -> UserEntity.builder() //신규 사용자 생성
+                        .username(username)
+                        .name(oAuth2Response.getName())
+                        .email(oAuth2Response.getEmail())
+                        .role(Role.USER)
+                        .build()
+                ); //기존 사용자여도 메서드 체인으로 orElseGet을 거치면서 최종적으로 UserEntity 뱉음 (내부 람다식은 실행되지 않음)
 
         userRepository.save(userEntity);
 

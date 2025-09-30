@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
         uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "stop_id"}))
 @Getter
 @NoArgsConstructor
-public class FavoriteStops {
+public class FavoriteStops extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

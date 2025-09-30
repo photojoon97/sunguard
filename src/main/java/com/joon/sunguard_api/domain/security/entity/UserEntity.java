@@ -1,15 +1,14 @@
 package com.joon.sunguard_api.domain.security.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.joon.sunguard_api.domain.security.util.Role;
+import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor
 public class UserEntity {
 
     @Id
@@ -19,5 +18,22 @@ public class UserEntity {
     private String username;
     private String name;
     private String email;
-    private String role;
+
+    //TODO : role을 enum 타입으로 변경
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Builder
+    public UserEntity(String username, String name, String email, Role role){
+        this.username = username;
+        this.name = name;
+        this.email = email;
+        this.role = role;
+    }
+
+    public void updateUserEntity(String name, String email){
+        this.name = name;
+        this.email = email;
+    }
+
 }

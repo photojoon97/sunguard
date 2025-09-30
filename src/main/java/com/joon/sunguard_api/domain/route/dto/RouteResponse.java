@@ -2,6 +2,7 @@ package com.joon.sunguard_api.domain.route.dto;
 
 import com.joon.sunguard_api.domain.route.service.Node;
 import com.joon.sunguard_api.domain.route.util.Directions;
+import com.joon.sunguard_api.domain.route.util.Seats;
 import lombok.Builder;
 import lombok.Getter;
 import java.util.List;
@@ -20,4 +21,6 @@ public class RouteResponse {
 
     // 이동 방위
     private Directions totalDirection;
+
+    private Seats recommendedSeat;
 }

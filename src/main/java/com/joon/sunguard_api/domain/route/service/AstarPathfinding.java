@@ -2,9 +2,7 @@ package com.joon.sunguard_api.domain.route.service;
 
 import com.joon.sunguard_api.domain.busstop.entity.BusStop;
 import com.joon.sunguard_api.domain.route.dto.RouteResponse;
-import com.joon.sunguard_api.domain.route.util.CalculateDirection;
-import com.joon.sunguard_api.domain.route.util.CalculateDistance;
-import com.joon.sunguard_api.domain.route.util.Directions;
+import com.joon.sunguard_api.domain.route.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -27,6 +25,7 @@ public class AstarPathfinding implements Pathfinder {
     private final RouteDataLoader routeDataLoader;
     private final CalculateDistance calculateDistance;
     private final CalculateDirection calculateDirection;
+    private final RecommendSeat recommendSeat;
 
     private static final double TRANSFER_PENALTY = 1.0; // 환승 페널티 (km)
     private static final int MAX_TRANSFER = 2;
@@ -185,11 +184,23 @@ public class AstarPathfinding implements Pathfinder {
             mostDirection = max.get().getKey();
         }
 
+        /*
+        Double solarInfo = recommendSeat.getSolarInfo("부산", "20250927");
+        Double relativeAzimith = recommendSeat.calcRelativeAzimith(solarInfo, totalDirection.get(mostDirection));
+        Double shadow = (relativeAzimith + 180) % 360;
+
+        int idx = (int)Math.floor(((shadow + 45) % 360) / 90.0);
+        Seats[] seats = Seats.values();
+        Seats seat = seats[idx];
+
+         */
+
         return RouteResponse.builder()
                 .steps(totalPath)
                 .totalDirection(mostDirection)
                 .totalDistance(totalDistance)
                 .transferCount(totalTransfers)
+                //.recommendedSeat(seat)
                 .build();
     }
 
