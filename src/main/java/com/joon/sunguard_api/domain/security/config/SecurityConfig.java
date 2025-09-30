@@ -17,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 @Configuration
 @EnableWebSecurity
@@ -39,11 +40,15 @@ public class SecurityConfig {
                 .formLogin(auth -> auth.disable())
                 .httpBasic(auth -> auth.disable());
 
+        http
+                .requestCache(cache -> cache
+                        .requestCache(new HttpSessionRequestCache()));
+
         // 2. 경로별 인가 규칙 설정
         http
                 .authorizeHttpRequests(auth -> auth
                         // 공개 엔드포인트 접근 허용
-                        .requestMatchers("/", "/login", "/login/oauth2/code/**", "/oauth2/**", "/logout").permitAll()
+                        .requestMatchers("/", "/login/*", "/logout/*").permitAll()
                         // 나머지 모든 요청은 인증 필요
                         .anyRequest().authenticated());
 

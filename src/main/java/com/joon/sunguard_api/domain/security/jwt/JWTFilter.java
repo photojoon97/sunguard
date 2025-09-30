@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
@@ -27,7 +29,7 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try{
-            String accessToken = cookieMangement.extractTokenFromCookie(request, "access_token");
+            String accessToken = cookieMangement.extractTokenFromCookie(request, "access-token");
 
             if (accessToken == null){
                 filterChain.doFilter(request,response);
@@ -40,15 +42,14 @@ public class JWTFilter extends OncePerRequestFilter {
 
             String username = jwtUtil.getUsername(accessToken);
             String role = jwtUtil.getRole(accessToken);
-            UserDTO userDto = new UserDTO();
-            userDto.setUsername(username);
-            userDto.setRole(Role.valueOf(role));
+            UserDTO userDto = UserDTO.builder()
+                    .username(username)
+                    .role(Role.valueOf(role))
+                    .build();
 
             CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
             Authentication authentication = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            //logger.info("Valid access token. Set authentication for user: {}", username);
 
 
         }catch (ExpiredJwtException e){
@@ -64,8 +65,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
         filterChain.doFilter(request, response);
-
     }
 }

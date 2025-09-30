@@ -7,13 +7,18 @@ import com.joon.sunguard_api.domain.security.util.CookieMangement;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -32,7 +37,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String username = customOAuth2User.getUsername();
         String role = customOAuth2User.getAuthorities().iterator().next().getAuthority();
 
-        long accessTokenExpiration = 5 * 60 * 1000L; //5 minutes
+        long accessTokenExpiration = 1 * 30 * 1000L; //5 minutes
         long refreshTokenExpiration = 7 * 24 * 60 * 60 * 1000L; // 7 days
 
         String accessToken = jwtUtil.createJwt("accessToken",username, role, accessTokenExpiration);
@@ -44,9 +49,19 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // Add tokens to cookies
         //TODO: 1. AccessToken 클라이언트 메모리에 저장
         // -    2. RefreshToken HTTP Only 쿠키에 저장 & SameSite=[Strict|Lax] 쿠키
-        response.addCookie(cookieMangement.createCookie("access_token", accessToken));
-        response.addCookie(cookieMangement.createCookie("refresh_token", refreshToken));
-        
+        response.addCookie(cookieMangement.createCookie("access-token", accessToken));
+        response.addCookie(cookieMangement.createCookie("refresh-token", refreshToken));
+/*
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        String originUrl = "/";
+
+        if(savedRequest != null){
+            originUrl = savedRequest.getRedirectUrl();
+            log.info("originUrl = {}", originUrl);
+        }
+
+        HttpSession session = request.getSession(false); //세션 무효화
+*/
         // Redirect to root
         getRedirectStrategy().sendRedirect(request, response, "/");
     }

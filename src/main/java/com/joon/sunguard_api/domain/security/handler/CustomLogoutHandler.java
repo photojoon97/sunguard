@@ -23,7 +23,7 @@ public class CustomLogoutHandler implements LogoutHandler {
     @Transactional
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 
-        String refreshToken = cookieMangement.extractTokenFromCookie(request, "refresh_token");
+        String refreshToken = cookieMangement.extractTokenFromCookie(request, "refresh-token");
 
         if(refreshToken == null){
             log.warn("Refresh token : null ");

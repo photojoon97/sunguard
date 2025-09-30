@@ -8,10 +8,12 @@ import com.joon.sunguard_api.domain.security.util.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JWTProvider {
@@ -22,28 +24,30 @@ public class JWTProvider {
 
 
     public Authentication reissueToken(HttpServletRequest request, HttpServletResponse response) {
+        log.info("Start reissue access token");
         String refreshToken = cookieMangement.extractTokenFromCookie(request, "refresh-token");
 
-        if(refreshToken == null || refreshTokenService.validateRefreshToken(refreshToken)) {
+        if(refreshToken == null || !refreshTokenService.validateRefreshToken(refreshToken)) {
             return null;
         }
 
         String username = jwtUtil.getUsername(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
 
+        log.info("username = {}, role = {}", username, role);
+
         //TODO: Access Token 유효기간 설정파일로 분리
-        String newAccessToken = jwtUtil.createJwt("accessToken" ,username, role, 5 * 60 * 1000L);
+        String newAccessToken = jwtUtil.createJwt("accessToken" ,username, role, 1 * 30 * 1000L);
         response.addCookie(cookieMangement.createCookie("access-token", newAccessToken));
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername(username);
-        userDTO.setRole(Role.valueOf(role));
+        UserDTO userDto = UserDTO.builder()
+                .username(username)
+                .role(Role.valueOf(role))
+                .build();
 
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
 
         return new UsernamePasswordAuthenticationToken(null, customOAuth2User);
-
-
 
     }
 }

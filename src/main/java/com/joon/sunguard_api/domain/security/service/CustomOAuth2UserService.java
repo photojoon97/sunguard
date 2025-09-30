@@ -33,9 +33,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Object grantedAuthorities = oAuth2User.getAttributes().get("Granted Authorities");
         Object email = oAuth2User.getAttributes().get("email");
 
-        log.info("oAuth2User : {}  id : {}  Granted Authorities : {}    email : {}", login, id, grantedAuthorities, email);
-
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();// 현재 로그인을 진행 중인 서비스를 구분하는 코드
 
         OAuth2Response oAuth2Response;
 
@@ -64,10 +62,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         userRepository.save(userEntity);
 
-        UserDTO userDto = new UserDTO();
-        userDto.setUsername(userEntity.getUsername());
-        userDto.setName(userEntity.getName());
-        userDto.setRole(userEntity.getRole());
+        UserDTO userDto = UserDTO.builder()
+                .role(userEntity.getRole())
+                .name(userEntity.getName())
+                .username(userEntity.getUsername())
+                .build();
 
         return new CustomOAuth2User(userDto);
 

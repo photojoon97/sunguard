@@ -30,15 +30,23 @@ public class RefreshTokenService {
             jwtUtil.isExpired(token);
 
             if (!"refreshToken".equals(jwtUtil.getCategory(token))) {
+                log.warn("유효하지 않은 토큰 카테고리입니다: {}", jwtUtil.getCategory(token));
                 return false;
             }
 
             RefreshToken dbRefreshToken = refreshTokenRepository.findByRefreshToken(token);
+            log.info("db refresh token = {}", dbRefreshToken);
 
             //TODO: 검증 로직 보완
-
-            return dbRefreshToken != null && dbRefreshToken.getRefreshToken().equals(token);
-        } catch (Exception e) {
+            if (dbRefreshToken == null) {
+                log.warn("DB에 존재하지 않는 Refresh Token입니다.");
+                return false;
+            }
+            //return dbRefreshToken != null && dbRefreshToken.getRefreshToken().equals(token);
+            return dbRefreshToken.getRefreshToken().equals(token);
+        }
+         catch (Exception e) {
+            log.warn("Refresh Token 검증 중 예외 발생 (만료 또는 형식 오류): {}", e.getMessage());
             return false;
         }
     }
@@ -61,7 +69,7 @@ public class RefreshTokenService {
 
     }
 
-    public void deleteExistRefreshToken(CustomOAuth2User user){
+    public void deleteExistRefreshToken(CustomOAuth2User user) {
         String userName = user.getUsername();
         UserEntity userEntity = userRepository.findByUsername(userName).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
