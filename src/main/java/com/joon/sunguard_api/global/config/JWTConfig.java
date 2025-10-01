@@ -5,11 +5,14 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+
 @Setter
 @Getter
 @Component
 @ConfigurationProperties(prefix = "jwt")
-public class JwtConfig {
+public class JWTConfig {
     private String secret;
-    private Long expiredMs;
+    private Duration accessTokenExpiration;
+    private Duration refreshTokenExpiration;
 }

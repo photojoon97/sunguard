@@ -26,6 +26,7 @@ public class RefreshTokenService {
 
     public boolean validateRefreshToken(String token) {
         try {
+            token = token == null ? null : token.trim();
 
             jwtUtil.isExpired(token);
 

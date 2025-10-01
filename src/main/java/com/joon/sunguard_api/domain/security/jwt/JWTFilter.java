@@ -32,6 +32,11 @@ public class JWTFilter extends OncePerRequestFilter {
             String accessToken = cookieMangement.extractTokenFromCookie(request, "access-token");
 
             if (accessToken == null){
+                // access-token이 없을 때도 조용히 refresh-token 기반 재발급 시도
+                Authentication authentication = jwtProvider.reissueToken(request, response);
+                if (authentication != null){
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
                 filterChain.doFilter(request,response);
                 return;
             }

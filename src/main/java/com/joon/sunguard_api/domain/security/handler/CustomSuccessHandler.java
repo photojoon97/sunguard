@@ -4,16 +4,14 @@ import com.joon.sunguard_api.domain.security.dto.CustomOAuth2User;
 import com.joon.sunguard_api.domain.security.jwt.JWTUtil;
 import com.joon.sunguard_api.domain.security.service.RefreshTokenService;
 import com.joon.sunguard_api.domain.security.util.CookieMangement;
+import com.joon.sunguard_api.global.config.JWTConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,8 +22,10 @@ import java.io.IOException;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JWTUtil jwtUtil;
+    private final JWTConfig jwtConfig;
     private final CookieMangement cookieMangement;
     private final RefreshTokenService refreshTokenService;
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -37,8 +37,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String username = customOAuth2User.getUsername();
         String role = customOAuth2User.getAuthorities().iterator().next().getAuthority();
 
-        long accessTokenExpiration = 1 * 30 * 1000L; //5 minutes
-        long refreshTokenExpiration = 7 * 24 * 60 * 60 * 1000L; // 7 days
+        long accessTokenExpiration = jwtConfig.getAccessTokenExpiration().toMillis();
+        long refreshTokenExpiration = jwtConfig.getRefreshTokenExpiration().toMillis();
 
         String accessToken = jwtUtil.createJwt("accessToken",username, role, accessTokenExpiration);
         String refreshToken = jwtUtil.createJwt("refreshToken", username, role,  refreshTokenExpiration);

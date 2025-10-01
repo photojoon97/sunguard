@@ -1,7 +1,7 @@
 package com.joon.sunguard_api.domain.security.jwt;
 
 import com.joon.sunguard_api.domain.security.util.Role;
-import com.joon.sunguard_api.global.config.JwtConfig;
+import com.joon.sunguard_api.global.config.JWTConfig;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +13,10 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    private final JwtConfig jwtConfig;
+    private final JWTConfig jwtConfig;
     private final SecretKey secretKey;
 
-    public JWTUtil(JwtConfig jwtConfig){
+    public JWTUtil(JWTConfig jwtConfig){
         this.jwtConfig = jwtConfig;
         String secret = jwtConfig.getSecret();
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
