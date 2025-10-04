@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 @Entity
-@Table(name = " route_paths")
+@Table(name = "route_paths")
 @Getter
 public class RoutePath {
     @Id

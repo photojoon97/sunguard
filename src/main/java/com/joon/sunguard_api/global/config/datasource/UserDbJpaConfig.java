@@ -1,6 +1,7 @@
 package com.joon.sunguard_api.global.config.datasource;
 
 
+import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -31,8 +32,9 @@ public class UserDbJpaConfig {
             @Qualifier("userdbDataSource") DataSource dataSource) {
 
         HashMap<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.hbm2ddl.auto", "create"); //none으로 변경
+        properties.put("hibernate.hbm2ddl.auto", "none");
         properties.put("hibernate.format_sql", "true");
+        properties.put("hibernate.physical_naming_strategy", new CamelCaseToUnderscoresNamingStrategy());
 
         return builder
                 .dataSource(dataSource)
@@ -49,4 +51,3 @@ public class UserDbJpaConfig {
         return new JpaTransactionManager(userdbEntityManagerFactory.getObject());
     }
 }
-

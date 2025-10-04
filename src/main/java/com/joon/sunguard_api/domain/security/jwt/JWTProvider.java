@@ -43,7 +43,7 @@ public class JWTProvider {
 
         //TODO: Access Token 유효기간 설정파일로 분리
         String newAccessToken = jwtUtil.createJwt("accessToken" ,username, role, accessTokenExpiration);
-        response.addCookie(cookieMangement.createCookie("access-token", newAccessToken));
+        response.addCookie(cookieMangement.createCookie("access-token", newAccessToken, (int)accessTokenExpiration/1000));
 
         UserDTO userDto = UserDTO.builder()
                 .username(username)

@@ -88,6 +88,12 @@ public class AstarPathfinding implements Pathfinder {
             if (curIdx != -1 && curIdx < stops.size() - 1) {
                 String nextStopId = stops.get(curIdx + 1);
                 BusStop nextStop = routeDataLoader.getStopInfo().get(nextStopId);
+                
+                if (nextStop == null) {
+                    //log.warn("다음 정류장 정보를 찾을 수 없습니다. nextStopId: {}", nextStopId);
+                    continue;
+                }
+                
                 String nextStopName = nextStop.getStopName();
                 String busNo = routeDataLoader.getLineInfo().get(lineId);
 
@@ -184,7 +190,10 @@ public class AstarPathfinding implements Pathfinder {
             mostDirection = max.get().getKey();
         }
 
+
         /*
+        //TODO : 하드코딩 수정
+        // 좌석 추천 코드 블록
         Double solarInfo = recommendSeat.getSolarInfo("부산", "20250927");
         Double relativeAzimith = recommendSeat.calcRelativeAzimith(solarInfo, totalDirection.get(mostDirection));
         Double shadow = (relativeAzimith + 180) % 360;
@@ -192,7 +201,6 @@ public class AstarPathfinding implements Pathfinder {
         int idx = (int)Math.floor(((shadow + 45) % 360) / 90.0);
         Seats[] seats = Seats.values();
         Seats seat = seats[idx];
-
          */
 
         return RouteResponse.builder()
