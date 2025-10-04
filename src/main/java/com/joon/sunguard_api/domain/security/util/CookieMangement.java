@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class CookieMangement {
 
-    public Cookie createCookie(String key, String value) {
+    public Cookie createCookie(String key, String value, int expiration) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24 * 60 * 60 * 7);
+        cookie.setMaxAge(expiration);
         // cookie.setSecure(true); // For HTTPS
         cookie.setPath("/");
         cookie.setHttpOnly(true);

@@ -37,3 +37,4 @@ public class FavoriteRouteController {
         favoriteRouteService.deleteFavoriteRoute(user, request);
     }
 }
+

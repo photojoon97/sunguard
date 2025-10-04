@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "user_entity")
 @Getter
 @NoArgsConstructor
 public class UserEntity {

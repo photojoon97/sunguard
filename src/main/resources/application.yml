@@ -1,14 +1,44 @@
 spring:
   jpa:
     open-in-view: true
-  config:
-    import:
-      - classpath:application-db.yml
-      - classpath:application-security.yml
-      - classpath:application-busan-bus-api.yml
-      - classpath:application-solar-api.yml
-      - classpath:application-jwt.yml
+  datasource:
+    sunguard:
+      jdbc-url: jdbc:mariadb://${RDS_ENDPOINT}:3306/${DB_NAME_SUNGUARD}
+      username: ${DB_SUNGUARD_USERNAME}
+      password: ${DB_SUNGUARD_PASSWORD}
+      driver-class-name: org.mariadb.jdbc.Driver
+    userdb:
+      jdbc-url: jdbc:mariadb://${RDS_ENDPOINT}:3306/${DB_NAME_USERDB}
+      username: ${DB_USERDB_USERNAME}
+      password: ${DB_USERDB_PASSWORD}
+      driver-class-name: org.mariadb.jdbc.Driver
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-name: github
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope: name,email
+
 logging:
   level:
     reactor.netty.http.client: DEBUG
     org.springframework.web.reactive.function.client: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: 5m
+  refresh-token-expiration: 7d
+
+busan-bus-api:
+  key : ${DATA_GO_KR_API_KEY}
+  url:
+    base_url: https://apis.data.go.kr/6260000/BusanBIMS/busStopList
+    arrival_url: https://apis.data.go.kr/6260000/BusanBIMS/stopArrByBstopid
+    route_url: https://apis.data.go.kr/6260000/BusanBIMS/busInfoByRouteId
+
+solar-api:
+  key: ${DATA_GO_KR_API_KEY}
+  url: https://apis.data.go.kr/B090041/openapi/service/SrAltudeInfoService/getAreaSrAltudeInfo

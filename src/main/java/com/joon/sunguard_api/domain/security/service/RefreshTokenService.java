@@ -11,10 +11,12 @@ import com.joon.sunguard_api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Slf4j
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
@@ -46,7 +48,7 @@ public class RefreshTokenService {
             //return dbRefreshToken != null && dbRefreshToken.getRefreshToken().equals(token);
             return dbRefreshToken.getRefreshToken().equals(token);
         }
-         catch (Exception e) {
+        catch (Exception e) {
             log.warn("Refresh Token 검증 중 예외 발생 (만료 또는 형식 오류): {}", e.getMessage());
             return false;
         }

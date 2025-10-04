@@ -12,6 +12,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
 
 @Configuration
 @EnableTransactionManagement
@@ -27,10 +28,15 @@ public class SunguardJpaConfig {
     public LocalContainerEntityManagerFactoryBean sunguardEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
             @Qualifier("sunguardDataSource") DataSource dataSource) {
+
+        HashMap<String, Object> properties = new HashMap<>();
+        properties.put("hibernate.hbm2ddl.auto", "none"); //절대 변경 X
+
         return builder
                 .dataSource(dataSource)
                 .packages("com.joon.sunguard_api.domain.busstop.entity", "com.joon.sunguard_api.domain.route.entity")
                 .persistenceUnit("sunguard")
+                .properties(properties)
                 .build();
     }
 

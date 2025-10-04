@@ -49,8 +49,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // Add tokens to cookies
         //TODO: 1. AccessToken 클라이언트 메모리에 저장
         // -    2. RefreshToken HTTP Only 쿠키에 저장 & SameSite=[Strict|Lax] 쿠키
-        response.addCookie(cookieMangement.createCookie("access-token", accessToken));
-        response.addCookie(cookieMangement.createCookie("refresh-token", refreshToken));
+        response.addCookie(cookieMangement.createCookie("access-token", accessToken, (int)accessTokenExpiration/1000));
+        response.addCookie(cookieMangement.createCookie("refresh-token", refreshToken,(int)refreshTokenExpiration/1000));
 /*
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         String originUrl = "/";
