@@ -36,24 +36,24 @@ public class AstarPathfinding implements Pathfinder {
         Map<String, List<String>> nightlineToStops = routeDataLoader.getNightlineToStops();
 
         //context 초기화
-        BusStop startStop = routeDataLoader.getStopInfo().get(startStopId);
-        BusStop endStop = routeDataLoader.getStopInfo().get(endStopId);
+        BusStop startStop = routeDataLoader.getStopInfo(startStopId);
+        BusStop endStop = routeDataLoader.getStopInfo(endStopId);
 
-        List<String> startStopList = routeDataLoader.getStopNameToIds().get(startStop.getStopName());
-        List<String> endStopList = routeDataLoader.getStopNameToIds().get(endStop.getStopName());
+        List<String> startStopList = routeDataLoader.getStopNameToIds(startStop.getStopName());
+        List<String> endStopList = routeDataLoader.getStopNameToIds(endStop.getStopName());
 
         PathfindingContext context = new PathfindingContext(startStopId, endStopId);
         context.allStartStopIds.addAll(startStopList);
         context.allEndStopIds.addAll(endStopList);
 
         for (String curStopId : context.allStartStopIds) {
-            BusStop curBusStop = routeDataLoader.getStopInfo().get(curStopId);
+            BusStop curBusStop = routeDataLoader.getStopInfo(curStopId);
 
-            for (String curLindId : routeDataLoader.getStopToLines().get(curStopId)) {
+            for (String curLindId : routeDataLoader.getStopToLines(curStopId)) {
                 //Node 객체 생성
                 double h = heuristic(curBusStop, endStop);
                 String curStopName = curBusStop.getStopName();
-                String busNo = routeDataLoader.getLineInfo().get(curLindId);
+                String busNo = routeDataLoader.getLineInfo(curLindId);
                 Node node = new Node(0.0 + h, 0.0, curStopId, curStopName, curLindId, busNo, 0.0, null, 0);
                 context.getGScore().put(node, node.getGScore());
 
@@ -74,7 +74,7 @@ public class AstarPathfinding implements Pathfinder {
                 continue;
             }
 
-            BusStop curStop = routeDataLoader.getStopInfo().get(cur.getStopId());
+            BusStop curStop = routeDataLoader.getStopInfo(cur.getStopId());
 
             //도착
             if (checkGoalNode(context, cur)) {
@@ -82,12 +82,12 @@ public class AstarPathfinding implements Pathfinder {
             }
 
             //인접 정류장들을 방문해야 함
-            List<String> stops = routeDataLoader.getLineToStops().get(lineId);
+            List<String> stops = routeDataLoader.getLineToStops(lineId);
             int curIdx = stops.indexOf(cur.getStopId());
 
             if (curIdx != -1 && curIdx < stops.size() - 1) {
                 String nextStopId = stops.get(curIdx + 1);
-                BusStop nextStop = routeDataLoader.getStopInfo().get(nextStopId);
+                BusStop nextStop = routeDataLoader.getStopInfo(nextStopId);
                 
                 if (nextStop == null) {
                     //log.warn("다음 정류장 정보를 찾을 수 없습니다. nextStopId: {}", nextStopId);
@@ -95,7 +95,7 @@ public class AstarPathfinding implements Pathfinder {
                 }
                 
                 String nextStopName = nextStop.getStopName();
-                String busNo = routeDataLoader.getLineInfo().get(lineId);
+                String busNo = routeDataLoader.getLineInfo(lineId);
 
                 double distance = calculateDistance.getDistnace
                         (curStop.getGpsY(), curStop.getGpsX(),
@@ -127,18 +127,18 @@ public class AstarPathfinding implements Pathfinder {
 
 
     public void transfer(PathfindingContext context, Node cur, BusStop endStop) {
-        List<String> lines = routeDataLoader.getStopToLines().get(cur.getStopId());
+        List<String> lines = routeDataLoader.getStopToLines(cur.getStopId());
 
         for (String line : lines) {
 
             if (!line.equals(cur.getLineId())) {
-                String busNo = routeDataLoader.getLineInfo().get(line);
+                String busNo = routeDataLoader.getLineInfo(line);
                 double tentativeGScore = context.getGScore().get(cur) + TRANSFER_PENALTY;
                 int transfer = cur.getTransfers() + 1;
 
                 Node neighborNode = new Node(0, tentativeGScore, cur.getStopId(), cur.getStopName(), line, busNo, 0.0, null, transfer);
                 if (tentativeGScore < context.getGScore().getOrDefault(neighborNode, Double.MAX_VALUE)) {
-                    BusStop busStop = routeDataLoader.getStopInfo().get(cur.getStopId());
+                    BusStop busStop = routeDataLoader.getStopInfo(cur.getStopId());
                     double h = heuristic(busStop, endStop);
                     neighborNode.setfScore(tentativeGScore + h);
                     context.getCameFrom().put(neighborNode, cur);

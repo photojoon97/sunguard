@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface RouteDataLoader {
-    Map<String, BusStop> getStopInfo();
-    Map<String, String> getLineInfo();
-    Map<String, List<String>> getStopNameToIds();
-    Map<String, List<String>> getStopToLines();
-    Map<String, List<String>> getLineToStops();
-    Map<String, List<String>> getNightlineToStops();
     void loadData();
+    BusStop getStopInfo(String stopId);
+    String getLineInfo(String lineId);
+    List<String> getStopNameToIds(String stopName);
+    List<String> getStopToLines(String stopId);
+    List<String> getLineToStops(String lineId);
+    Map<String,List<String>> getNightlineToStops();
 }
