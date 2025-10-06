@@ -24,8 +24,6 @@ public class SunguardApiApplication {
 		}
 
 		SpringApplication.run(SunguardApiApplication.class, args);
-
-
 	}
 
 }

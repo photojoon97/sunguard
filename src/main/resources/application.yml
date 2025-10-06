@@ -1,16 +1,18 @@
 spring:
+  application:
+    name: sunguard
   jpa:
     open-in-view: true
   datasource:
     sunguard:
       jdbc-url: jdbc:mariadb://${RDS_ENDPOINT}:3306/${DB_NAME_SUNGUARD}
-      username: ${DB_SUNGUARD_USERNAME}
-      password: ${DB_SUNGUARD_PASSWORD}
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
       driver-class-name: org.mariadb.jdbc.Driver
     userdb:
       jdbc-url: jdbc:mariadb://${RDS_ENDPOINT}:3306/${DB_NAME_USERDB}
-      username: ${DB_USERDB_USERNAME}
-      password: ${DB_USERDB_PASSWORD}
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
       driver-class-name: org.mariadb.jdbc.Driver
   security:
     oauth2:
@@ -22,18 +24,13 @@ spring:
             client-secret: ${GITHUB_CLIENT_SECRET}
             scope: name,email
 
-logging:
-  level:
-    reactor.netty.http.client: DEBUG
-    org.springframework.web.reactive.function.client: DEBUG
-
 jwt:
   secret: ${JWT_SECRET}
   access-token-expiration: 5m
   refresh-token-expiration: 7d
 
 busan-bus-api:
-  key : ${DATA_GO_KR_API_KEY}
+  key: ${DATA_GO_KR_API_KEY}
   url:
     base_url: https://apis.data.go.kr/6260000/BusanBIMS/busStopList
     arrival_url: https://apis.data.go.kr/6260000/BusanBIMS/stopArrByBstopid

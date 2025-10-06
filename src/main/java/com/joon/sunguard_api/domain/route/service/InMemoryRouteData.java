@@ -92,33 +92,32 @@ public class InMemoryRouteData implements RouteDataLoader {
     }
 
     @Override
-    public Map<String, BusStop> getStopInfo() {
-        return stopInfo;
+    public BusStop getStopInfo(String stopId) {
+        return stopInfo.get(stopId);
     }
 
     @Override
-    public Map<String, String> getLineInfo() {
-        return lineInfo;
+    public String getLineInfo(String lineId) {
+        return lineInfo.get(lineId);
     }
 
     @Override
-    public Map<String, List<String>> getStopNameToIds() {
-        return stopNameToIds;
+    public List<String> getStopNameToIds(String stopName) {
+        return stopNameToIds.get(stopName);
     }
 
     @Override
-    public Map<String, List<String>> getStopToLines() {
-        return stopToLines;
+    public List<String> getStopToLines(String stopId) {
+        return stopToLines.get(stopId);
     }
 
     @Override
-    public Map<String, List<String>> getLineToStops() {
-        return lineToStops;
+    public List<String> getLineToStops(String lineId) {
+        return lineToStops.get(lineId);
     }
 
     @Override
-    public Map<String, List<String>> getNightlineToStops() {
+    public Map<String,List<String>> getNightlineToStops() {
         return nightlineToStops;
     }
-
 }

@@ -20,7 +20,6 @@ public class CustomLogoutHandler implements LogoutHandler {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    @Transactional
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 
         String refreshToken = cookieMangement.extractTokenFromCookie(request, "refresh-token");

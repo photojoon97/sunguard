@@ -69,8 +69,8 @@ public class SecurityConfig {
                         .logoutUrl("/logout") // 기본 POST 요청으로 매핑됨
                         .addLogoutHandler(customLogoutHandler)
                         .logoutSuccessHandler((request, response, authentication) -> {
-                            cookieMangement.deleteCookie(response, "access_token");
-                            cookieMangement.deleteCookie(response, "refresh_token");
+                            cookieMangement.deleteCookie(response, "access-token");
+                            cookieMangement.deleteCookie(response, "refresh-token");
                             response.sendRedirect("/");
                         })
                         .invalidateHttpSession(true)
