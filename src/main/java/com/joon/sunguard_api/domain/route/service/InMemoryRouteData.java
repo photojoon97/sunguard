@@ -9,14 +9,13 @@ import com.joon.sunguard_api.domain.route.repository.RoutePathRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Primary
+//@Primary
 @Component
 @RequiredArgsConstructor
 public class InMemoryRouteData implements RouteDataLoader {
