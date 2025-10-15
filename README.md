@@ -38,6 +38,7 @@
 
 ## 아키텍처
 
+<img width="2551" height="1294" alt="Image" src="https://github.com/user-attachments/assets/7fad55ad-e770-41e5-a7e1-f318ab7da3d0" />
 
 <br>
 
