@@ -3,6 +3,9 @@ package com.joon.sunguard_api.domain.route.service;
 import com.joon.sunguard_api.domain.busstop.entity.BusStop;
 import com.joon.sunguard_api.domain.route.dto.RouteResponse;
 import com.joon.sunguard_api.domain.route.util.*;
+import com.joon.sunguard_api.global.exception.CustomException;
+import com.joon.sunguard_api.global.exception.ErrorCode;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -38,6 +41,10 @@ public class AstarPathfinding implements Pathfinder {
         //context 초기화
         BusStop startStop = routeDataLoader.getStopInfo(startStopId);
         BusStop endStop = routeDataLoader.getStopInfo(endStopId);
+
+        if(startStop == null || endStop == null){
+            throw new CustomException(ErrorCode.BUSSTOP_NOT_FOUND);
+        }
 
         List<String> startStopList = routeDataLoader.getStopNameToIds(startStop.getStopName());
         List<String> endStopList = routeDataLoader.getStopNameToIds(endStop.getStopName());
@@ -78,6 +85,9 @@ public class AstarPathfinding implements Pathfinder {
 
             //도착
             if (checkGoalNode(context, cur)) {
+                String start = routeDataLoader.getStopInfo(startStopId).getStopName();
+                String  end = routeDataLoader.getStopInfo(cur.getStopId()).getStopName();
+                log.info("최단 경로 탐색 완료 : {} -> {}",start, end);
                 return reconstructPath(context.getCameFrom(), cur);
             }
 
@@ -122,7 +132,10 @@ public class AstarPathfinding implements Pathfinder {
                 transfer(context, cur, endStop);
             }
         }
-        return null;
+        String startStopName = startStop.getStopName();
+        String endStopName = endStop.getStopName();
+        throw new CustomException(ErrorCode.ROUTE_NOT_FOUND,
+                String.format("'%s'에서 '%s'(으)로 가는 경로를 찾을 수 없습니다.", startStopName, endStopName));
     }
 
 
@@ -147,7 +160,6 @@ public class AstarPathfinding implements Pathfinder {
                 }
             }
         }
-
     }
 
     public RouteResponse reconstructPath(Map<Node, Node> cameFrom, Node cur) {

@@ -11,7 +11,7 @@ public class CookieMangement {
     public Cookie createCookie(String key, String value, int expiration) {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(expiration);
-        // cookie.setSecure(true); // For HTTPS
+        cookie.setSecure(true); // For HTTPS
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 

@@ -17,7 +17,7 @@ public class RouteRestController {
     private final RecommendSeat recommendSeat;
 
 
-    @GetMapping("/userRoute")
+    @GetMapping("/user-route")
     public RouteResponse findUserRouteV2(
             @RequestParam("departureId") String departureId,
             @RequestParam("destinationId") String destinationId
@@ -25,8 +25,22 @@ public class RouteRestController {
         return pathfidingService.findRoute(departureId, destinationId);
     }
 
+    /* 테스트용
+    @GetMapping("/no-user-route")
+    public RouteResponse findUserRouteV3(
+            @RequestParam("departureId") String departureId,
+            @RequestParam("destinationId") String destinationId
+    ){
+        return pathfidingService.findRoute(departureId, destinationId);
+    }
+
+     */
+
+
+    /*
     @GetMapping("/sun")
     public Double getSolarInfo(){
         return recommendSeat.getSolarInfo("부산", "20250807");
     }
+    */
 }

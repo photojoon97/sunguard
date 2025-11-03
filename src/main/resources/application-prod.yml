@@ -1,0 +1,41 @@
+# 운영 환경 설정
+server:
+  port: 8080
+  forward-headers-strategy: native
+
+spring:
+  config:
+    import: aws-parameterstore:/sunguard/
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 20    # 최대 커넥션 (서버 스펙에 맞게 조정)
+          max-idle: 10      # 유휴 커넥션 최대
+          min-idle: 5       # 유휴 커넥션 최소
+          max-wait: 3000ms  # 커넥션 대기 시간
+        shutdown-timeout: 100ms
+
+logging:
+  level:
+    root: INFO
+    com.joon.sunguard_api: DEBUG
+
+# Actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus  # 필요한 엔드포인트만 노출
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

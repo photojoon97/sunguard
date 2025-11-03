@@ -22,14 +22,14 @@ public class FavoriteStopController {
         return favoriteStopsService.getFavoriteStops(user);
     }
 
-    @PostMapping("/favorite/{stopId}")
-    public FavoriteStopDto registerFavoriteStops(@PathVariable("stopId") String stopId, @AuthenticationPrincipal CustomOAuth2User user) {
+    @PostMapping("/favorite")
+    public FavoriteStopDto registerFavoriteStops(@RequestParam("stopId") String stopId, @AuthenticationPrincipal CustomOAuth2User user) {
         return favoriteStopsService.registerFavoriteStops(user, stopId);
     }
 
-    @DeleteMapping("/favorite/{stopId}")
+    @DeleteMapping("/favorite")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFavoriteStops(@PathVariable("stopId") String stopId, @AuthenticationPrincipal CustomOAuth2User user) {
+    public void deleteFavoriteStops(@RequestParam("stopId") String stopId, @AuthenticationPrincipal CustomOAuth2User user) {
         favoriteStopsService.deleteFavoriteStops(user, stopId);
     }
 

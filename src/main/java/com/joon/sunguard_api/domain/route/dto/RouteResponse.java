@@ -23,4 +23,5 @@ public class RouteResponse {
     private Directions totalDirection;
 
     private Seats recommendedSeat;
+
 }

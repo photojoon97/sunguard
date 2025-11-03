@@ -1,13 +1,12 @@
 package com.joon.sunguard_api.domain.busstop.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.joon.sunguard_api.domain.busstop.dto.request.ArrivalBusRequestDto;
 import com.joon.sunguard_api.domain.busstop.dto.response.BusStopArrivalResponseDto;
 import com.joon.sunguard_api.domain.busstop.dto.request.NearbyStopsRequest;
 import com.joon.sunguard_api.domain.busstop.dto.response.BusStopResponse;
 import com.joon.sunguard_api.domain.busstop.entity.BusStop;
 import com.joon.sunguard_api.domain.busstop.repository.BusStopRepository;
-import com.joon.sunguard_api.domain.busstop.repository.BusanBusRepository;
+
 import com.joon.sunguard_api.global.config.BusanBusApi;
 import com.joon.sunguard_api.global.exception.CustomException;
 import com.joon.sunguard_api.global.exception.ErrorCode;
@@ -88,10 +87,10 @@ public class BusstopService {
     }
 
     //실시간 버스 도착 정보 조회 서비스
-    public List<BusStopArrivalResponseDto> getRealtimeArrivingBus(ArrivalBusRequestDto requestDto) {
+    public List<BusStopArrivalResponseDto> getRealtimeArrivingBus(String stopId) {
         String url = busanBusApi.getUrl().getArrival_url();
         String key = busanBusApi.getKey();
-        String bstopid = requestDto.getBstopid();
+        String bstopid = stopId;
 
         // DB에서 해당 정류장에 도착하는 버스 목록 조회 (lineId, lineNo만 포함)
         List<BusStop> dbBuses = busStopRepository.findListByStopId(bstopid);
@@ -105,7 +104,7 @@ public class BusstopService {
                 "multipleResponseStrategy",
                 key,
                 url,
-                requestDto,
+                stopId,
                 new TypeReference<WrapperResponse<BusStopArrivalResponseDto>>() {
                 }
         );

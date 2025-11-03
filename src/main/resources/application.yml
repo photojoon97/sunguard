@@ -22,11 +22,12 @@ spring:
             client-name: github
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
+            redirect-uri: "https://fighbird.duckdns.org/login/oauth2/code/github"
             scope: name,email
 
 jwt:
   secret: ${JWT_SECRET}
-  access-token-expiration: 5m
+  access-token-expiration: 50m
   refresh-token-expiration: 7d
 
 busan-bus-api:

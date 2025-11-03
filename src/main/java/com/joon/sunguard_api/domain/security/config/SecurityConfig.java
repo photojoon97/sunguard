@@ -48,7 +48,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         // 공개 엔드포인트 접근 허용
-                        .requestMatchers("/", "/login/*", "/logout/*").permitAll()
+                        .requestMatchers("/", "/login/*", "/logout/*","api/routes/no-user-route").permitAll()
                         // 나머지 모든 요청은 인증 필요
                         .anyRequest().authenticated());
 

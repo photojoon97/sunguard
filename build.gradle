@@ -39,7 +39,6 @@ dependencies {
 
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:3.3.3' //maria db는 mysql과 호환된다
-	//runtimeOnly 'com.mysql:mysql-connector-j'
 
 
 	compileOnly 'org.projectlombok:lombok'
@@ -47,7 +46,6 @@ dependencies {
 
 	//aws-parameter-store
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
-	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'

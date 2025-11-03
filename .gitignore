@@ -21,7 +21,6 @@ bin/
 
 # Sensitive configuration files
 # Ignore profile-specific application properties, but keep the main application.yml
-/src/main/resources/application-*.yml
 
 #로컬 환경변수
 .env
