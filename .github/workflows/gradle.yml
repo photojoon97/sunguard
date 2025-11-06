@@ -3,16 +3,19 @@ name: Java CI/CD with Gradle
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:  # 수동 실행도 가능
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    outputs:
-      jar-path: ${{ steps.jar.outputs.path }}
+    permissions:
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -23,21 +26,25 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build with Gradle
+      - name: Build with Gradle Wrapper
         run: ./gradlew clean build -x test
 
-      - name: Set JAR path as output
-        id: jar
-        run: echo "path=build/libs/sunguard-api-0.0.1-SNAPSHOT.jar" >> $GITHUB_OUTPUT
+      - name: Upload build artifact (JAR)
+        uses: actions/upload-artifact@v4
+        with:
+          name: sunguard-jar
+          path: build/libs/sunguard-api-0.0.1-SNAPSHOT.jar
 
   deploy:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sunguard-jar
 
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@master
@@ -45,7 +52,7 @@ jobs:
           host: ${{ secrets.EC2_IP }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PEM_KEY }}
-          source: ${{ needs.build.outputs.jar-path }}
+          source: "sunguard-api-0.0.1-SNAPSHOT.jar"
           target: "/home/ec2-user"
 
       - name: Run deploy script on EC2
