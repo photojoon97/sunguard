@@ -5,7 +5,6 @@ import com.joon.sunguard_api.domain.route.dto.RouteResponse;
 import com.joon.sunguard_api.domain.route.util.*;
 import com.joon.sunguard_api.global.exception.CustomException;
 import com.joon.sunguard_api.global.exception.ErrorCode;
-import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -28,7 +27,7 @@ public class AstarPathfinding implements Pathfinder {
     private final RouteDataLoader routeDataLoader;
     private final CalculateDistance calculateDistance;
     private final CalculateDirection calculateDirection;
-    private final RecommendSeat recommendSeat;
+    //private final RecommendSeat recommendSeat;
 
     private static final double TRANSFER_PENALTY = 1.0; // 환승 페널티 (km)
     private static final int MAX_TRANSFER = 2;
