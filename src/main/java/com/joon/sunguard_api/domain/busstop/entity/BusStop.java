@@ -1,14 +1,14 @@
 package com.joon.sunguard_api.domain.busstop.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "bus_stops")
 @Getter
+@NoArgsConstructor
 public class BusStop {
     @Id
     @Column(name = "bus_stop_id")
@@ -29,4 +29,11 @@ public class BusStop {
     @Column(name = "bus_stop_type")
     private String stopType;
 
+    public BusStop(String stopId, String stopNo, String stopName, double gpsX, double gpsY) {
+        this.stopId = stopId;
+        this.stopNo = stopNo;
+        this.stopName = stopName;
+        this.gpsX = gpsX;
+        this.gpsY = gpsY;
+    }
 }
