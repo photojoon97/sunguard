@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 //TODO : 1. 직행 노선 조기 종료 구현
@@ -27,7 +28,7 @@ public class AstarPathfinding implements Pathfinder {
     private final RouteDataLoader routeDataLoader;
     private final CalculateDistance calculateDistance;
     private final CalculateDirection calculateDirection;
-    //private final RecommendSeat recommendSeat;
+    private final RecommendSeat recommendSeat;
 
     private static final double TRANSFER_PENALTY = 1.0; // 환승 페널티 (km)
     private static final int MAX_TRANSFER = 2;
@@ -97,12 +98,12 @@ public class AstarPathfinding implements Pathfinder {
             if (curIdx != -1 && curIdx < stops.size() - 1) {
                 String nextStopId = stops.get(curIdx + 1);
                 BusStop nextStop = routeDataLoader.getStopInfo(nextStopId);
-                
+
                 if (nextStop == null) {
                     //log.warn("다음 정류장 정보를 찾을 수 없습니다. nextStopId: {}", nextStopId);
                     continue;
                 }
-                
+
                 String nextStopName = nextStop.getStopName();
                 String busNo = routeDataLoader.getLineInfo(lineId);
 
@@ -202,24 +203,28 @@ public class AstarPathfinding implements Pathfinder {
         }
 
 
-        /*
+
         //TODO : 하드코딩 수정
         // 좌석 추천 코드 블록
-        Double solarInfo = recommendSeat.getSolarInfo("부산", "20250927");
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String today = sdf.format(date);
+
+        Double solarInfo = recommendSeat.getSolarInfo("부산", today);
         Double relativeAzimith = recommendSeat.calcRelativeAzimith(solarInfo, totalDirection.get(mostDirection));
         Double shadow = (relativeAzimith + 180) % 360;
 
         int idx = (int)Math.floor(((shadow + 45) % 360) / 90.0);
         Seats[] seats = Seats.values();
         Seats seat = seats[idx];
-         */
+
 
         return RouteResponse.builder()
                 .steps(totalPath)
                 .totalDirection(mostDirection)
                 .totalDistance(totalDistance)
                 .transferCount(totalTransfers)
-                //.recommendedSeat(seat)
+                .recommendedSeat(seat)
                 .build();
     }
 
