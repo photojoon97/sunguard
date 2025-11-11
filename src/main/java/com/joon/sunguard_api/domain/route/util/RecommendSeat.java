@@ -45,15 +45,16 @@ public class RecommendSeat {
             return null; // 또는 예외 처리
         }
 
+
         return calcCurrentAzimuth(responseDTO);
     }
 
-    public Double calcRelativeAzimith(double sunAzimuth, double busDirection){
+    public Double calcRelativeAzimith(double sunAzimuth, double busDirection) {
         return (sunAzimuth - busDirection + 360) % 360;
     }
 
 
-    public Double calcCurrentAzimuth(SolarResponseDTO SolarInfo) {
+    public Double calcCurrentAzimuth(SolarResponseDTO solarInfo) {
         double solarAzimuth = 0;
         double nextSolarAzimuth = 0;
         double nowAzimuth;
@@ -71,18 +72,18 @@ public class RecommendSeat {
         switch ((currentHour - 9) / 3) {
             case 0:
                 startHour = 9;
-                solarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_09());
-                nextSolarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_12());
+                solarAzimuth = Double.parseDouble(solarInfo.getAzimuth_09().split("˚")[0]);
+                nextSolarAzimuth = Double.parseDouble(solarInfo.getAzimuth_12().split("˚")[0]);
                 break;
             case 1:
                 startHour = 12;
-                solarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_12());
-                nextSolarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_15());
+                solarAzimuth = Double.parseDouble(solarInfo.getAzimuth_12().split("˚")[0]);
+                nextSolarAzimuth = Double.parseDouble(solarInfo.getAzimuth_15().split("˚")[0]);
                 break;
             case 2:
                 startHour = 15;
-                solarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_15());
-                nextSolarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_18());
+                solarAzimuth = Double.parseDouble(solarInfo.getAzimuth_15().split("˚")[0]);
+                nextSolarAzimuth = Double.parseDouble(solarInfo.getAzimuth_18().split("˚")[0]);
 
             /*    break;
             case 3:
