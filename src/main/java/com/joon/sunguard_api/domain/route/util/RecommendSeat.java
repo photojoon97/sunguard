@@ -57,12 +57,10 @@ public class RecommendSeat {
     public Double calcCurrentAzimuth(SolarResponseDTO solarInfo) {
         double solarAzimuth = 0;
         double nextSolarAzimuth = 0;
-        double nowAzimuth;
 
         int startHour;
         int currentHour = LocalDateTime.now().getHour();
         int currentMinute = LocalDateTime.now().getMinute();
-
 
         if (currentHour < 9 || currentHour > 18) {
             //해가 없을 경우 처리
@@ -84,8 +82,8 @@ public class RecommendSeat {
                 startHour = 15;
                 solarAzimuth = Double.parseDouble(solarInfo.getAzimuth_15().split("˚")[0]);
                 nextSolarAzimuth = Double.parseDouble(solarInfo.getAzimuth_18().split("˚")[0]);
-
-            /*    break;
+                break;
+            /*
             case 3:
                 startHour = 18;
                 solarAzimuth = Double.parseDouble(SolarInfo.getAzimuth_18());

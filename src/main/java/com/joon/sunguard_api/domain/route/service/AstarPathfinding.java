@@ -211,13 +211,16 @@ public class AstarPathfinding implements Pathfinder {
         String today = sdf.format(date);
 
         Double solarInfo = recommendSeat.getSolarInfo("부산", today);
-        Double relativeAzimith = recommendSeat.calcRelativeAzimith(solarInfo, totalDirection.get(mostDirection));
-        Double shadow = (relativeAzimith + 180) % 360;
-
-        int idx = (int)Math.floor(((shadow + 45) % 360) / 90.0);
         Seats[] seats = Seats.values();
-        Seats seat = seats[idx];
+        Seats seat = seats[4];
 
+        if(solarInfo != null){
+            Double relativeAzimith = recommendSeat.calcRelativeAzimith(solarInfo, totalDirection.get(mostDirection));
+            Double shadow = (relativeAzimith + 180) % 360;
+
+            int idx = (int)Math.floor(((shadow + 45) % 360) / 90.0);
+            seat = seats[idx];
+        }
 
         return RouteResponse.builder()
                 .steps(totalPath)
